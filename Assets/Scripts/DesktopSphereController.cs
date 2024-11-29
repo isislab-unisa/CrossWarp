@@ -7,6 +7,7 @@ public class DesktopSphereController : NetworkBehaviour
 {
 
     public GameObject hitObjectPrefab;
+    private GameObject selectedObject;
 
     void Start()
     {
@@ -41,7 +42,29 @@ public class DesktopSphereController : NetworkBehaviour
         Ray ray = Camera.main.ViewportPointToRay(invertedPoint);//new Ray(pointFromCamera, direction*5000);//Camera.main.ScreenPointToRay(pointFromCamera);
         Debug.DrawLine(ray.origin, ray.direction*5000, Color.red, 50);
         if (Physics.Raycast(ray, out RaycastHit hit)){
-            Instantiate(hitObjectPrefab, hit.point, Quaternion.identity);
+            if(hit.collider.tag.Equals("MovableObject")){
+                if(hit.collider.gameObject == selectedObject){
+                    selectedObject.GetComponent<Outline>().enabled = false;
+                    selectedObject = null;
+                }
+                else if(selectedObject != null){
+                    // deselect old selectedObjecr
+                    selectedObject.GetComponent<Outline>().enabled = false;
+                    // select new object
+                    selectedObject = hit.collider.gameObject;
+                    selectedObject.GetComponent<Outline>().enabled = true;
+                }
+                else{
+                    selectedObject = hit.collider.gameObject;
+                    selectedObject.GetComponent<Outline>().enabled = true;
+                }
+            }
+            else{
+                if(selectedObject == null)
+                    Instantiate(hitObjectPrefab, hit.point, Quaternion.identity);
+                else
+                    selectedObject.transform.position = hit.point;
+            }
             //hit.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
 
         }

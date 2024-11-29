@@ -5,6 +5,7 @@ using UnityEngine;
 public class UnpositionedAnchor : MonoBehaviour
 {
     public GameObject linePrefab;
+    private bool _isSelected;
 
     void Start()
     {

@@ -12,6 +12,9 @@ public class SubplaneConfig : MonoBehaviour
     public GameObject subplanePrefab;
     public ARPlacementInteractable placementInteractable;
     private bool isConfig = false;
+
+    // si usano i piani per posizionare gli anchor?
+    public bool usePlanes = false;
     private bool canConfig = true;
     private List<GameObject> anchors = new List<GameObject>();
     private List<GameObject> createdSubplanes = new List<GameObject>();
@@ -21,20 +24,23 @@ public class SubplaneConfig : MonoBehaviour
             Debug.Log("BCZ start subplane config");
             anchors = new List<GameObject>();
             isConfig = true;
-            placementInteractable.enabled = true;
+            if(usePlanes)
+                placementInteractable.enabled = true;
         }
     }
 
+    // when a plane is created the config is stopped
     public void StopConfig(){
         isConfig = false;
         placementInteractable.enabled = false;
     }
 
+    // when we don't want to edit the planes anymore, config ends
     public void EndConfig(){
         Debug.Log("BCZ Chiamata end config");
         StopConfig();
         canConfig = false;
-        HideAllAnchors();
+        HideAllSubplanes();
         Debug.Log("Disabilito PlaneManagers");
         ARPlaneManager aRPlaneManager = FindObjectOfType<XROrigin>().GetComponent<ARPlaneManager>();
         aRPlaneManager.enabled = false;
@@ -45,14 +51,46 @@ public class SubplaneConfig : MonoBehaviour
         }
     }
 
-    public void HideAllAnchors(){
+    // when we want to edit the config after a config end
+    public void EditConfig(){
+        canConfig = true;
+        ShowAllSubplanes();
+        Debug.Log("Abilito PlaneManagers");
+        ARPlaneManager aRPlaneManager = FindObjectOfType<XROrigin>().GetComponent<ARPlaneManager>();
+        aRPlaneManager.enabled = true;
+
+        foreach (var plane in aRPlaneManager.trackables)
+        {
+            plane.gameObject.SetActive(false);
+        }
+    }
+
+    public void HideAllSubplanes(){
         foreach(GameObject subplane in createdSubplanes){
             subplane.GetComponent<Subplane>().HideSubplane();
         }
     }
 
+    public void ShowAllSubplanes(){
+        foreach(GameObject subplane in createdSubplanes){
+            subplane.GetComponent<Subplane>().ShowSubplane();
+        }
+    }
+
     public void OnAnchorPlaced(ARObjectPlacementEventArgs args){
         anchors.Add(args.placementObject);
+    }
+
+    public void UsePlanes(bool isUsingPlane){
+        usePlanes = isUsingPlane;
+        Debug.Log("UsePlanes: " + usePlanes);
+        if(usePlanes){
+            if(isConfig)
+                placementInteractable.enabled = true;
+        }
+        else{
+            placementInteractable.enabled = false;
+        }
     }
 
     public void Update(){
@@ -82,14 +120,18 @@ public class SubplaneConfig : MonoBehaviour
                 }
             }
         }*/
-        if(isConfig && Input.touchCount > 0){
+        if(isConfig && !usePlanes && Input.touchCount > 0){
             Touch touch = Input.GetTouch(0);
             Debug.Log("Touch rilevato");
             if (touch.phase == TouchPhase.Began)
             {
                 Vector3 touchPointWorldPosition = Camera.main.ScreenToWorldPoint(touch.position);
                 Vector3 creationPoint = new Vector3(touchPointWorldPosition.x, touchPointWorldPosition.y, touchPointWorldPosition.z) + Camera.main.transform.forward*0.2f;  
-                GameObject anchor = Instantiate(unpositionedAncorPrefab, creationPoint, Quaternion.identity);
+                GameObject anchor = Instantiate(ancorPrefab, creationPoint, Quaternion.identity);
+                var placementAnchor = new GameObject("PlacementAnchor").transform;
+                placementAnchor.position = creationPoint;
+                placementAnchor.rotation = Quaternion.identity;
+                anchor.transform.parent = placementAnchor;
                 Debug.Log("anchor creato a : " + creationPoint);
                 anchors.Add(anchor);
             }

@@ -8,6 +8,8 @@ public class Subplane : MonoBehaviour
     public GameObject anchorPrefab;
     private List<GameObject> anchors = new List<GameObject>();
     private GameObject center;
+
+    // forse non serve più
     private bool isVisible = true;
     void Start()
     {
@@ -17,15 +19,30 @@ public class Subplane : MonoBehaviour
 
     void Update()
     {
-        if(anchors.Count == 3 && isVisible){
+        /*if(anchors.Count == 3 && isVisible){
             //Debug.Log("Renderizzo subplane: " + anchors[0]);
             // da migliorare in modo che renderizza solo quando cambiano i punti
             RenderSubplane();
-        }
+        }*/
     }
 
     public void SetAnchors(List<GameObject> selectedAnchors){
         anchors = selectedAnchors;
+        foreach(GameObject anchor in anchors){
+            /*Vector3 worldPosition = anchor.transform.position;
+            Vector3 worldScale = anchor.transform.localScale;
+            Quaternion worldRotation = anchor.transform.rotation;
+            anchor.transform.parent = transform;
+            anchor.transform.position = worldPosition;
+            anchor.transform.localScale = worldScale;
+            anchor.transform.rotation = worldRotation;*/
+            //anchor.transform.SetParent(transform, true);
+            anchor.GetComponent<SubplaneAnchor>().SetSubplane(transform.gameObject);
+        }
+        RenderSubplane();
+    }
+
+    public void OnAnchorMoved(){
         RenderSubplane();
     }
 
@@ -62,6 +79,7 @@ public class Subplane : MonoBehaviour
         else
             this.center = Instantiate(anchorPrefab, center, rotation);
 
+        this.center.GetComponent<SubplaneAnchor>().enabled = false;
         //Debug.Log("BCZ Instanzio il subplane");
         transform.position = center;
         transform.rotation = rotation;
@@ -77,10 +95,20 @@ public class Subplane : MonoBehaviour
     }
 
     public void HideSubplane(){
-        Debug.Log("BCZ Nascondo plane");
+        Debug.Log("BCZ Nascondo i subplane");
         isVisible = false;
         foreach(GameObject anchor in anchors){
             anchor.SetActive(false);
+        }
+        Color materialColor = GetComponent<Renderer>().material.color;
+        materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0.001f);
+    }
+
+    public void ShowSubplane(){
+        Debug.Log("BCZ Moatro i subplane");
+        isVisible = true;
+        foreach(GameObject anchor in anchors){
+            anchor.SetActive(true);
         }
         Color materialColor = GetComponent<Renderer>().material.color;
         materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0.1f);
