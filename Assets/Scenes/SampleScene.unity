@@ -3732,7 +3732,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!1 &1432292874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3857,7 +3857,7 @@ MonoBehaviour:
   unpositionedAncorPrefab: {fileID: 3812809597145456144, guid: 039a2273ac5415a4a9057047da5e0bbc, type: 3}
   subplanePrefab: {fileID: 6159103845858797904, guid: a62a590595e6dff4a9438a6b1f19fa29, type: 3}
   placementInteractable: {fileID: 1769011432}
-  usePlanes: 0
+  usePlanes: 1
 --- !u!114 &1432292880
 MonoBehaviour:
   m_ObjectHideFlags: 0

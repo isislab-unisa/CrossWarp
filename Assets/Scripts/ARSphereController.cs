@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Fusion;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ARSphereController : NetworkBehaviour
 {
     DesktopSphereController otherPlayer;
     Vector3 startPosition;
+    private SubplaneConfig subplaneConfig;
 
     public bool CheckReferenceToDesktopObject(){
         if(otherPlayer != null)
@@ -64,11 +66,21 @@ public class ARSphereController : NetworkBehaviour
     }
 
     public void move(Vector3 newPosition){
-            //Debug.Log("BCZ tocco otherplayer: " + otherPlayer.transform.position);
-            //Debug.Log("BCZ newposition: " + newPosition);
-            Vector3 prova = new Vector3(newPosition.x*10, newPosition.y*10, otherPlayer.transform.position.z);
-            otherPlayer.UpdatePositionRpc(newPosition);
-            startPosition = new Vector3(0, startPosition.y + 1);
+        if(!subplaneConfig)
+            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
+        //Debug.Log("BCZ tocco otherplayer: " + otherPlayer.transform.position);
+        //Debug.Log("BCZ newposition: " + newPosition);
+        GameObject selectedSubplane = subplaneConfig.GetSelectedSubplane();
+
+        // selectedSubplane.transform.position should always be the center of the subplane
+        Vector3 position = newPosition - selectedSubplane.transform.position;
+
+        // non più a specchio
+        position.z = -position.z;
+
+        Vector3 prova = new Vector3(newPosition.x*10, newPosition.y*10, otherPlayer.transform.position.z);
+        otherPlayer.UpdatePositionRpc(position);
+        startPosition = new Vector3(0, startPosition.y + 1);
     }
 
     public void SendPointToDesktop(Vector3 point, Vector3 direction){

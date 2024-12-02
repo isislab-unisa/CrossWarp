@@ -11,13 +11,14 @@ public class SubplaneConfig : MonoBehaviour
     public GameObject unpositionedAncorPrefab;
     public GameObject subplanePrefab;
     public ARPlacementInteractable placementInteractable;
-    private bool isConfig = false;
 
     // si usano i piani per posizionare gli anchor?
     public bool usePlanes = false;
+    private bool isConfig = false;
     private bool canConfig = true;
     private List<GameObject> anchors = new List<GameObject>();
     private List<GameObject> createdSubplanes = new List<GameObject>();
+
 
     public void StartConfig(){
         if(canConfig){
@@ -50,6 +51,7 @@ public class SubplaneConfig : MonoBehaviour
             plane.gameObject.SetActive(false);
         }
     }
+
 
     // when we want to edit the config after a config end
     public void EditConfig(){
@@ -91,6 +93,12 @@ public class SubplaneConfig : MonoBehaviour
         else{
             placementInteractable.enabled = false;
         }
+    }
+
+    public GameObject GetSelectedSubplane(){
+        if(createdSubplanes.Count <= 0)
+            return null;
+        return createdSubplanes[0];
     }
 
     public void Update(){
