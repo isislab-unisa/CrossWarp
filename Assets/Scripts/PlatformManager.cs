@@ -21,6 +21,7 @@ public class PlatformManager : MonoBehaviour
             SetupDesktopMode();
         else
             SetupARMode();
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     void SetupARMode()

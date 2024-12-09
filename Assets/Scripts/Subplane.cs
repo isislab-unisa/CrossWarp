@@ -51,27 +51,28 @@ public class Subplane : MonoBehaviour
         Vector3 point2 = anchors[1].transform.position;
         Vector3 point3 = anchors[2].transform.position;
 
-        // Proietta point2 sulla stessa X di point1 (se desideri un rettangolo verticale)
+        // Proietta point2 sulla stessa X di point1 
         point2 = new Vector3(point1.x, point2.y, point1.z);
 
-        // Ora calcola point3 sulla stessa Y di point2 (o Z se in 3D)
+        // Proietta point3 sulla stessa Y di point2 
         point3 = new Vector3(point3.x, point2.y, point3.z);
 
-        // calcolo il primo vettore diff di A1 e A2
+        // calcolo l'altezza
         Vector3 vHeight = point1 - point2;
 
-        // calcolo il secondo vettore diff di A2 e A3
+        // calcolo la larghezza
         Vector3 vWidth = point3 - point2;
 
-        Vector3 normal = Vector3.Cross(vHeight, vWidth).normalized;
+        // l'altezza sarà la coord. y, e la larghezza coord. x, di conseguenza l'altezza è rivolta verso vector3.up e la larghezza verso vector3.right
+        Vector3 normal = Vector3.Cross(vWidth, vHeight).normalized;
 
-        Vector3 right = vHeight.normalized;
-        Vector3 up = normal;
-        Vector3 forward = Vector3.Cross(right, up);
+        Vector3 up = vHeight.normalized;
+        Vector3 forward = normal;
 
         // Crea una rotazione basata su forward e up
         Quaternion rotation = Quaternion.LookRotation(forward, up);
 
+        // calcolo il centro di dove verrà spostato il subplane
         Vector3 center = point2 + (vHeight / 2) + (vWidth / 2);
 
         if(this.center != null)
@@ -87,7 +88,7 @@ public class Subplane : MonoBehaviour
         //Debug.Log("BCZ subplane instanziato");
 
         // resize del piano
-        transform.localScale = new Vector3(vHeight.magnitude, 0.01f, vWidth.magnitude);
+        transform.localScale = new Vector3(vWidth.magnitude, vHeight.magnitude, 0.01f);
         //Debug.Log("SubplaneHeight: " + vHeight.magnitude);
         //Debug.Log("SubplaneWidth: " + vWidth.magnitude);
 
@@ -101,7 +102,8 @@ public class Subplane : MonoBehaviour
             anchor.SetActive(false);
         }
         Color materialColor = GetComponent<Renderer>().material.color;
-        materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0.001f);
+        materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0);
+        GetComponent<Renderer>().material.color = materialColor;
     }
 
     public void ShowSubplane(){
@@ -111,20 +113,21 @@ public class Subplane : MonoBehaviour
             anchor.SetActive(true);
         }
         Color materialColor = GetComponent<Renderer>().material.color;
-        materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0.1f);
+        materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0.7f);
+        GetComponent<Renderer>().material.color = materialColor;
     }
 
     public Vector3 NormalizedHitPoint(Vector3 localHitPoint){
         //TODO
         // Fixare il fatto che la superficie del subplane ha larghezza in z invece che in y
         float x = localHitPoint.x + 0.5f;
-        float z = 0;
-        if(localHitPoint.z >= 0)
-            z = 0.5f - localHitPoint.z;
+        float y = localHitPoint.y + 0.5f;
+        /*if(localHitPoint.y >= 0)
+            y = 0.5f - localHitPoint.y;
         else
-            z = -localHitPoint.z + 0.5f;
+            y = -localHitPoint.y + 0.5f;*/
 
-        Debug.Log("x, z: " + x + ", " + z);
-        return new Vector3(x, z, 0);
+        Debug.Log("x, y: " + x + ", " + y);
+        return new Vector3(x, y, 0);
     }
 }

@@ -27,25 +27,29 @@ public class DesktopSphereController : NetworkBehaviour
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void UpdatePositionRpc(Vector3 newPosition){
+    public void UpdatePositionRpc(Vector3 newPosition, Quaternion newRotation){
         Debug.Log("BCZ chiamata update position");
-        transform.position = new Vector3(newPosition.x, newPosition.y, Camera.main.nearClipPlane - newPosition.z);
+        //transform.rotation = newRotation;
+        //transform.position = new Vector3(newPosition.x, newPosition.y, Camera.main.nearClipPlane - newPosition.z);
+
+        transform.rotation = newRotation;
+        transform.position = newPosition;
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void SendRemotePointRpc(Vector3 point, Vector3 direction){
-        Vector3 pointFromCamera = Camera.main.ViewportToWorldPoint(new Vector3(point.y, point.x, Camera.main.nearClipPlane));//new Vector3(point.x, point.y, Camera.main.transform.position.z);
+        Vector3 pointFromCamera = Camera.main.ViewportToWorldPoint(new Vector3(point.x, point.y, Camera.main.nearClipPlane));//new Vector3(point.x, point.y, Camera.main.transform.position.z);
 
         Debug.Log("BCZ ricevuto punto, x: " + point.x);
         Debug.Log("BCZ ricevuto punto, y: " + point.y);
-        Vector3 invertedPoint = new Vector3(point.y, point.x, Camera.main.nearClipPlane);
+        Vector3 invertedPoint = new Vector3(point.x, point.y, Camera.main.nearClipPlane);
         Ray ray = Camera.main.ViewportPointToRay(invertedPoint);//new Ray(pointFromCamera, direction*5000);//Camera.main.ScreenPointToRay(pointFromCamera);
         Debug.DrawLine(ray.origin, ray.direction*5000, Color.red, 50);
         Debug.DrawLine(transform.position, direction, Color.blue, 50);
         if (Physics.Raycast(ray, out RaycastHit hit)){
             if(hit.collider.tag.Equals("MovableObject")){
                 if(hit.collider.gameObject == selectedObject){
-                    selectedObject.GetComponent<Outline>().enabled = false;
+                    selectedObject.GetComponent<Outline>().enabled = false; 
                     selectedObject = null;
                 }
                 else if(selectedObject != null){

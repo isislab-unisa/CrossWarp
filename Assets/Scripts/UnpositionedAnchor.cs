@@ -32,6 +32,6 @@ public class UnpositionedAnchor : MonoBehaviour
 
     void Update()
     {
-
+        
     }
 }

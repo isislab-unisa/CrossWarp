@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using Unity.VisualScripting;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 
 public class ARSphereController : NetworkBehaviour
@@ -9,6 +10,7 @@ public class ARSphereController : NetworkBehaviour
     DesktopSphereController otherPlayer;
     Vector3 startPosition;
     private SubplaneConfig subplaneConfig;
+    private XROrigin xROrigin;
 
     public bool CheckReferenceToDesktopObject(){
         if(otherPlayer != null)
@@ -56,35 +58,48 @@ public class ARSphereController : NetworkBehaviour
             if(!CheckReferenceToDesktopObject())
                 GetReferenceToDesktopObject();
             if(CheckReferenceToDesktopObject()){
-                move(main.transform.position);
+                move(main.transform.position, main.transform.rotation);
                 //Debug.Log("BCZ Move id: " + Id);
             }
             else{
-                //Debug.Log("BCZ Manca la reference all'object desktop");
+                Debug.Log("BCZ Manca la reference all'object desktop");
             }
         }
     }
 
-    public void move(Vector3 newPosition){
+    public void move(Vector3 newPosition, Quaternion newRotation){
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
-        //Debug.Log("BCZ tocco otherplayer: " + otherPlayer.transform.position);
-        //Debug.Log("BCZ newposition: " + newPosition);
         GameObject selectedSubplane = subplaneConfig.GetSelectedSubplane();
 
+        if(!selectedSubplane)
+            return;
+            
+        if(!xROrigin)
+            xROrigin = FindFirstObjectByType<XROrigin>();
+
+        // calcolo la differenza in rotazione tra il subplane e il forward globale
+        Quaternion rotation = GetRotationRelativeToSelectedSubplane();
+
+        // calcolo la posizione relativa al subplane
         // selectedSubplane.transform.position should always be the center of the subplane
         Vector3 position = newPosition - selectedSubplane.transform.position;
+        
+        /*Debug.Log("rotation: " + rotation);
+        Debug.Log("worldPosTel: " + newPosition);
+        Debug.Log("LpreRot: " + position);*/
+        // ruoto la posizione in base all'offset in rotazione
+        position = rotation * position;
+        newRotation *= rotation;
+        //Debug.Log("LpostRot: " + position);
 
-        // non più a specchio
-        position.z = -position.z;
-
-        Vector3 prova = new Vector3(newPosition.x*10, newPosition.y*10, otherPlayer.transform.position.z);
-        otherPlayer.UpdatePositionRpc(position);
+        otherPlayer.UpdatePositionRpc(position, newRotation);
         startPosition = new Vector3(0, startPosition.y + 1);
     }
 
     public void SendPointToDesktop(Vector3 point, Vector3 direction){
         Debug.Log("BCZ sendpoint id:" + Id);
+        direction = GetRotationRelativeToSelectedSubplane() * direction;
         
         if(!CheckReferenceToDesktopObject())
             GetReferenceToDesktopObject();
@@ -94,5 +109,17 @@ public class ARSphereController : NetworkBehaviour
         else{
             Debug.Log("BCZ Manca la reference all'object desktop");
         }
+    }
+
+    private Quaternion GetRotationRelativeToSelectedSubplane(){
+        if(!subplaneConfig)
+            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
+        GameObject selectedSubplane = subplaneConfig.GetSelectedSubplane();
+
+        if(!selectedSubplane)
+            return Quaternion.identity;
+        
+        Quaternion rotation = Quaternion.FromToRotation(selectedSubplane.transform.forward, Vector3.forward);
+        return rotation;
     }
 }
