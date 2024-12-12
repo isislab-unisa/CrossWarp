@@ -34,7 +34,6 @@ public class SubplaneAnchor : MonoBehaviour
             GetComponent<CustomARTranslateInteractable>().enabled = false;
         }
         else{
-            
             GetComponent<ARTranslationInteractable>().enabled = false;
             GetComponent<CustomARTranslateInteractable>().enabled = true;
         }

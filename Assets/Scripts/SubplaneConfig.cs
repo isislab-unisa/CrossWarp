@@ -11,9 +11,13 @@ public class SubplaneConfig : MonoBehaviour
     public GameObject unpositionedAncorPrefab;
     public GameObject subplanePrefab;
     public ARPlacementInteractable placementInteractable;
+    public GameObject StartButton;
+    public GameObject EndButton;
+    public GameObject MoveOnPlaneToggle;
 
     // si usano i piani per posizionare gli anchor?
     public bool usePlanes = false;
+    public bool isMirror = false;
     private bool isConfig = false;
     private bool canConfig = true;
     private List<GameObject> anchors = new List<GameObject>();
@@ -42,6 +46,7 @@ public class SubplaneConfig : MonoBehaviour
         StopConfig();
         canConfig = false;
         HideAllSubplanes();
+        HideUI();
         Debug.Log("Disabilito PlaneManagers");
         ARPlaneManager aRPlaneManager = FindObjectOfType<XROrigin>().GetComponent<ARPlaneManager>();
         aRPlaneManager.enabled = false;
@@ -57,6 +62,7 @@ public class SubplaneConfig : MonoBehaviour
     public void EditConfig(){
         canConfig = true;
         ShowAllSubplanes();
+        ShowUI();
         Debug.Log("Abilito PlaneManagers");
         ARPlaneManager aRPlaneManager = FindObjectOfType<XROrigin>().GetComponent<ARPlaneManager>();
         aRPlaneManager.enabled = true;
@@ -77,6 +83,18 @@ public class SubplaneConfig : MonoBehaviour
         foreach(GameObject subplane in createdSubplanes){
             subplane.GetComponent<Subplane>().ShowSubplane();
         }
+    }
+
+    private void HideUI(){
+        StartButton.SetActive(false);
+        EndButton.SetActive(false);
+        MoveOnPlaneToggle.SetActive(false);
+    }
+
+    private void ShowUI(){
+        StartButton.SetActive(true);
+        EndButton.SetActive(true);
+        MoveOnPlaneToggle.SetActive(true);
     }
 
     public void OnAnchorPlaced(ARObjectPlacementEventArgs args){

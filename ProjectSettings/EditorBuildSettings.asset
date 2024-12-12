@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 0
+    path: Assets/Scenes/MirrorScene.unity
+    guid: 69cd99b1a1d4591478e6879025b6576a
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 0aba118bd2caa9a4fb51c7c4fdb9dcba, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: edc5dc7361ff4d640b88ab1ed2f7dd8a, type: 2}

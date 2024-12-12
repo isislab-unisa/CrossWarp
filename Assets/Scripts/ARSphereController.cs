@@ -48,6 +48,9 @@ public class ARSphereController : NetworkBehaviour
         startPosition = new Vector3(0, 0, 0);
         Debug.Log("BCZ start");
         FindAnyObjectByType<DisplayConnector>().aRSphereController = this;
+        foreach(GameObject obj in GameObject.FindObjectsOfType<GameObject>()){
+            Debug.Log("" + obj.name);
+        }
     }
 
     // Update is called once per frame
@@ -93,18 +96,21 @@ public class ARSphereController : NetworkBehaviour
         newRotation *= rotation;
         //Debug.Log("LpostRot: " + position);
 
-        otherPlayer.UpdatePositionRpc(position, newRotation);
+        otherPlayer.UpdatePositionRpc(position, newRotation, subplaneConfig.isMirror, Runner.LocalPlayer);
         startPosition = new Vector3(0, startPosition.y + 1);
     }
 
     public void SendPointToDesktop(Vector3 point, Vector3 direction){
         Debug.Log("BCZ sendpoint id:" + Id);
         direction = GetRotationRelativeToSelectedSubplane() * direction;
+        bool isMirror = false;
+        if(subplaneConfig)
+            isMirror = subplaneConfig.isMirror;
         
         if(!CheckReferenceToDesktopObject())
             GetReferenceToDesktopObject();
         if(CheckReferenceToDesktopObject()){
-            otherPlayer.SendRemotePointRpc(point, direction);
+            otherPlayer.SendRemotePointRpc(point, direction, isMirror);
         }
         else{
             Debug.Log("BCZ Manca la reference all'object desktop");

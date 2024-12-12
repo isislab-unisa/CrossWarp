@@ -128,6 +128,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: -1195535104807132897}
   - {fileID: 1542625411362353981}
+  - {fileID: 6237752015981106833}
 --- !u!114 &-1195535104807132897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,6 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitObjectPrefab: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
+  phoneRapresentationPrefab: {fileID: 8470635758975143755, guid: 41bf5760b358ecd45ad77ceb3461d6bd, type: 3}
 --- !u!114 &1542625411362353981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +167,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59590b9e1102f648827c7f13a0c7249, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointPrefab: {fileID: 7046687705913474337, guid: d12c519ee3af7434996ca11b9dff5739, type: 3}
-  raycastManager: {fileID: 0}
   aRSphereController: {fileID: 1542625411362353981}
