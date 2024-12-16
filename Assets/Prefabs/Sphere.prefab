@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitObjectPrefab: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
-  phoneRapresentationPrefab: {fileID: 8470635758975143755, guid: 41bf5760b358ecd45ad77ceb3461d6bd, type: 3}
+  phoneRepresentationPrefab: {fileID: 8470635758975143755, guid: 41bf5760b358ecd45ad77ceb3461d6bd, type: 3}
 --- !u!114 &1542625411362353981
 MonoBehaviour:
   m_ObjectHideFlags: 0

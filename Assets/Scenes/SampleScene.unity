@@ -1717,6 +1717,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4925285865918448438, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
+      propertyPath: SortKey
+      value: 3917247808
+      objectReference: {fileID: 0}
     - target: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
       propertyPath: m_Name
       value: mio_funko

@@ -110,7 +110,7 @@ public class ARSphereController : NetworkBehaviour
         if(!CheckReferenceToDesktopObject())
             GetReferenceToDesktopObject();
         if(CheckReferenceToDesktopObject()){
-            otherPlayer.SendRemotePointRpc(point, direction, isMirror);
+            otherPlayer.SendRemotePointRpc(point, direction, isMirror, Runner.LocalPlayer);
         }
         else{
             Debug.Log("BCZ Manca la reference all'object desktop");

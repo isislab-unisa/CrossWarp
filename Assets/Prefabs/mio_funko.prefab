@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 2358519997444331972}
   - component: {fileID: 4898967978080891418}
   - component: {fileID: 4925285865918448438}
+  - component: {fileID: -3474974761922544632}
   m_Layer: 0
   m_Name: mio_funko
   m_TagString: MovableObject
@@ -208,3 +209,17 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 4898967978080891418}
+  - {fileID: -3474974761922544632}
+--- !u!114 &-3474974761922544632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8941350250810633950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7e3cb16a515e4f4991d5fc6c0fefdaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSelectedBy: {fileID: 0}

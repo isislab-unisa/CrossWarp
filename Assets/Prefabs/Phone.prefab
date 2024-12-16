@@ -114,6 +114,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4035833362787714534}
+  - component: {fileID: 8234705135472490757}
+  - component: {fileID: 3629465471445127827}
+  - component: {fileID: 3964219948248240986}
   m_Layer: 0
   m_Name: Phone
   m_TagString: Untagged
@@ -137,3 +140,48 @@ Transform:
   - {fileID: 2999862106727696534}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8234705135472490757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470635758975143755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d341db7b41c6fe344bbd207a2b28fece, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitObjectPrefab: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
+--- !u!114 &3629465471445127827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470635758975143755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1856046470
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 8234705135472490757}
+  - {fileID: 3964219948248240986}
+--- !u!114 &3964219948248240986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470635758975143755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7e3cb16a515e4f4991d5fc6c0fefdaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSelectedBy: {fileID: 0}
