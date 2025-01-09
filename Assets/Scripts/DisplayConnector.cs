@@ -13,7 +13,8 @@ public class DisplayConnector : NetworkBehaviour
 
     }
 
-    void Update()
+    /*
+    public override void FixedUpdateNetwork()
     {
         if (HasStateAuthority && Input.touchCount > 0)
         {
@@ -36,8 +37,11 @@ public class DisplayConnector : NetworkBehaviour
                             aRSphereController.SendPointToDesktop(cameraMappedPoint, direction);
                         }
                     }
+                    else{
+                        aRSphereController.MoveSelectedObject(hit.point);
+                    }
                 }
             }
         }
-    }
+    }*/
 }

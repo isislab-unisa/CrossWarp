@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 using UnityEngine.XR.Interaction.Toolkit.AR;
 
 public class SubplaneConfig : MonoBehaviour
@@ -40,6 +41,14 @@ public class SubplaneConfig : MonoBehaviour
         placementInteractable.enabled = false;
     }
 
+    public bool IsConfig(){
+        return isConfig;
+    }
+
+    public bool IsEndedConfig(){
+        return canConfig;
+    }
+
     // when we don't want to edit the planes anymore, config ends
     public void EndConfig(){
         Debug.Log("BCZ Chiamata end config");
@@ -49,11 +58,13 @@ public class SubplaneConfig : MonoBehaviour
         HideUI();
         Debug.Log("Disabilito PlaneManagers");
         ARPlaneManager aRPlaneManager = FindObjectOfType<XROrigin>().GetComponent<ARPlaneManager>();
-        aRPlaneManager.enabled = false;
+        aRPlaneManager.requestedDetectionMode = UnityEngine.XR.ARSubsystems.PlaneDetectionMode.Horizontal;
+        //aRPlaneManager.enabled = false;
 
         foreach (var plane in aRPlaneManager.trackables)
         {
-            plane.gameObject.SetActive(false);
+            if(plane.alignment == PlaneAlignment.Vertical)
+                plane.gameObject.SetActive(false);
         }
     }
 
@@ -65,7 +76,8 @@ public class SubplaneConfig : MonoBehaviour
         ShowUI();
         Debug.Log("Abilito PlaneManagers");
         ARPlaneManager aRPlaneManager = FindObjectOfType<XROrigin>().GetComponent<ARPlaneManager>();
-        aRPlaneManager.enabled = true;
+        aRPlaneManager.requestedDetectionMode = UnityEngine.XR.ARSubsystems.PlaneDetectionMode.Vertical | UnityEngine.XR.ARSubsystems.PlaneDetectionMode.Horizontal;
+        //aRPlaneManager.enabled = true;
 
         foreach (var plane in aRPlaneManager.trackables)
         {

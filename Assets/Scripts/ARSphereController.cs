@@ -48,21 +48,24 @@ public class ARSphereController : NetworkBehaviour
         startPosition = new Vector3(0, 0, 0);
         Debug.Log("BCZ start");
         FindAnyObjectByType<DisplayConnector>().aRSphereController = this;
-        foreach(GameObject obj in GameObject.FindObjectsOfType<GameObject>()){
-            Debug.Log("" + obj.name);
-        }
+
+        if(!PlatformManager.IsDesktop())
+            GetComponentInChildren<MeshRenderer>().enabled = true;
     }
 
     // Update is called once per frame
-    void Update()
+    public override void FixedUpdateNetwork()
     {
         Camera main = Camera.main;
         if(Input.touchCount > 0){
+            Touch touch = Input.GetTouch(0);
             if(!CheckReferenceToDesktopObject())
                 GetReferenceToDesktopObject();
             if(CheckReferenceToDesktopObject()){
                 move(main.transform.position, main.transform.rotation);
                 //Debug.Log("BCZ Move id: " + Id);
+                /*if(touch.phase == TouchPhase.Began)
+                    MoveSelectedObject(touch.position);*/
             }
             else{
                 Debug.Log("BCZ Manca la reference all'object desktop");
@@ -87,16 +90,16 @@ public class ARSphereController : NetworkBehaviour
         // calcolo la posizione relativa al subplane
         // selectedSubplane.transform.position should always be the center of the subplane
         Vector3 position = newPosition - selectedSubplane.transform.position;
-        
-        /*Debug.Log("rotation: " + rotation);
-        Debug.Log("worldPosTel: " + newPosition);
-        Debug.Log("LpreRot: " + position);*/
+
         // ruoto la posizione in base all'offset in rotazione
         position = rotation * position;
         newRotation *= rotation;
-        //Debug.Log("LpostRot: " + position);
 
-        otherPlayer.UpdatePositionRpc(position, newRotation, subplaneConfig.isMirror, Runner.LocalPlayer);
+        //otherPlayer.UpdatePositionRpc(position, newRotation, subplaneConfig.isMirror, Runner.LocalPlayer);
+        //Debug.Log("Chiamo la updateposition");
+        if(HasStateAuthority)
+            GetComponent<PhoneRepresentation>().UpdatePosition(position, newRotation, subplaneConfig.isMirror);
+            //transform.position = new Vector3(0.5f, 0.5f, 0.5f);
         startPosition = new Vector3(0, startPosition.y + 1);
     }
 
@@ -110,7 +113,7 @@ public class ARSphereController : NetworkBehaviour
         if(!CheckReferenceToDesktopObject())
             GetReferenceToDesktopObject();
         if(CheckReferenceToDesktopObject()){
-            otherPlayer.SendRemotePointRpc(point, direction, isMirror, Runner.LocalPlayer);
+            otherPlayer.SendRemotePointRpc(point, direction, isMirror, Runner.LocalPlayer, GetComponent<PhoneRepresentation>());
         }
         else{
             Debug.Log("BCZ Manca la reference all'object desktop");
@@ -128,4 +131,20 @@ public class ARSphereController : NetworkBehaviour
         Quaternion rotation = Quaternion.FromToRotation(selectedSubplane.transform.forward, Vector3.forward);
         return rotation;
     }
+
+    /*public void MoveSelectedObject(Vector2 point){
+        if(!subplaneConfig)
+            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
+        if(subplaneConfig.IsConfig())
+            return;
+        
+        /*Ray ray = Camera.main.ScreenPointToRay(point);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {*/
+            /*
+            PhoneRepresentation myPhoneRepresentation = GetComponent<PhoneRepresentation>();//otherPlayer.playersRepresentation[Runner.LocalPlayer].GetComponent<PhoneRepresentation>();
+            myPhoneRepresentation.SendLocalPoint(point, Vector3.forward);
+            myPhoneRepresentation.networkedSelectedObject.GetComponent<MovableObject>().controlledByAR = true;
+        //}
+    }*/ 
 }
