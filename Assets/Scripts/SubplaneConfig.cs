@@ -81,7 +81,7 @@ public class SubplaneConfig : MonoBehaviour
 
         foreach (var plane in aRPlaneManager.trackables)
         {
-            plane.gameObject.SetActive(false);
+            plane.gameObject.SetActive(true);
         }
     }
 

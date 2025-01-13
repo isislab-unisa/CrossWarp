@@ -49,11 +49,12 @@ public class ARSphereController : NetworkBehaviour
         Debug.Log("BCZ start");
         FindAnyObjectByType<DisplayConnector>().aRSphereController = this;
 
-        if(!PlatformManager.IsDesktop())
-            GetComponentInChildren<MeshRenderer>().enabled = true;
+        if(!PlatformManager.IsDesktop()){
+            GetComponentInChildren<MeshRenderer>().enabled = false;
+            GetComponent<Collider>().enabled = false;
+        }
     }
 
-    // Update is called once per frame
     public override void FixedUpdateNetwork()
     {
         Camera main = Camera.main;

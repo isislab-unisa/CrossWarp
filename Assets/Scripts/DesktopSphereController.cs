@@ -111,13 +111,13 @@ public class DesktopSphereController : NetworkBehaviour
                     // select new object
                     /*selectedObject = hit.collider.gameObject;
                     selectedObject.GetComponent<Outline>().enabled = true;*/
-                    if(hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(callingPhone))
+                    if(hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(callingPhone).Result)
                         selectedObject = hit.collider.gameObject;
                 }
                 else{
                     /*selectedObject = hit.collider.gameObject;
                     selectedObject.GetComponent<Outline>().enabled = true;*/
-                    if(hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(callingPhone))
+                    if(hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(callingPhone).Result)
                         selectedObject = hit.collider.gameObject;
                 }
             }

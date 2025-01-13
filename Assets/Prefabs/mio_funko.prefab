@@ -205,7 +205,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 2722531612
   ObjectInterest: 1
-  Flags: 262145
+  Flags: 524289
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 4898967978080891418}
@@ -223,3 +223,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isSelectedBy: {fileID: 0}
+  _controlledByAR: 0
+  meshRenderer: {fileID: 9179990582524691212}
+  collider: {fileID: 2358519997444331972}
