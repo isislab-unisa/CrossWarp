@@ -18,12 +18,32 @@ MonoBehaviour:
     m_Storage: []
   m_Images:
   - m_SerializedGuid:
-      m_GuidLow: 4883071785310494938
-      m_GuidHigh: 8826888867348117136
+      m_GuidLow: 5397179541425266413
+      m_GuidHigh: 14543244401101357232
+    m_SerializedTextureGuid:
+      m_GuidLow: 13345335690664877978
+      m_GuidHigh: 17779966695523927467
+    m_Size: {x: 0, y: 0}
+    m_SpecifySize: 0
+    m_Name: downleft
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5009246942302704595
+      m_GuidHigh: 6564779527752637106
     m_SerializedTextureGuid:
       m_GuidLow: 14219132497687007095
       m_GuidHigh: 15808649811809210842
     m_Size: {x: 0, y: 0}
     m_SpecifySize: 0
-    m_Name: totem-funko
+    m_Name: upleft
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5403453823428302042
+      m_GuidHigh: 12025953249714083006
+    m_SerializedTextureGuid:
+      m_GuidLow: 7175530607005854547
+      m_GuidHigh: 10631425726666105192
+    m_Size: {x: 0, y: 0}
+    m_SpecifySize: 0
+    m_Name: downright
     m_Texture: {fileID: 0}

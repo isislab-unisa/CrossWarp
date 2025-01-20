@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 public class ImageTrackingManager : MonoBehaviour
 {
@@ -15,52 +16,106 @@ public class ImageTrackingManager : MonoBehaviour
     private TMP_Text distanceTxt;
     [SerializeField]
     private GameObject TrackedImagePrefab;
-    private GameObject oggetto;
+    private GameObject trackedImageObject;
     private Transform displayPosition = null;
     
+    private SubplaneConfig subplaneConfig;
+    private Subplane existingSubplane;
 
-    void OnEnable() => m_TrackedImageManager.trackedImagesChanged += OnChanged;
+    private Dictionary<TrackableId, GameObject> trackedAnchors = new Dictionary<TrackableId, GameObject>();
 
-    void OnDisable() => m_TrackedImageManager.trackedImagesChanged -= OnChanged;
+    void OnEnable(){
+        if(!m_TrackedImageManager){
+            Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
+            return;
+        }
+        m_TrackedImageManager.trackedImagesChanged += OnChanged;
+    }
+
+    void OnDisable(){
+        if(!m_TrackedImageManager){
+            Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
+            return;
+        }
+        m_TrackedImageManager.trackedImagesChanged -= OnChanged;
+    }
 
     void OnChanged(ARTrackedImagesChangedEventArgs eventArgs)
     {
-        foreach (var newImage in eventArgs.added)
+        if(!subplaneConfig)
+            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
+        foreach (ARTrackedImage newImage in eventArgs.added)
         {
-            //m_TrackedImageManager.enabled = false;
             displayPosition = newImage.transform;
-            //oggetto = Instantiate(TrackedImagePrefab, displayPosition.position, displayPosition.rotation);
-            oggetto = Instantiate(TrackedImagePrefab, newImage.transform);
-            Debug.Log("BCZ immagine: " + displayPosition.position.x + " " + displayPosition.position.y + " " + displayPosition.position.z);
-            Debug.Log("BCZ oggetto: " + oggetto.transform.position.x + " " + oggetto.transform.position.y + " " + oggetto.transform.position.z);
-
-            GameObject imageTracker = GameObject.FindWithTag("ImageTracker");
-            if(imageTracker)
-                imageTracker.GetComponent<ImageTracker>().RpcImageTracked();
-            else
-                Debug.Log("BCZ non c'è l'image tracker");
+            Debug.Log("BCZ immagine: " + newImage.transform.position);
+            if(subplaneConfig && !trackedAnchors.ContainsKey(newImage.trackableId)){
+                CreateSubplaneAnchorByImage(newImage);
+            }
         }
 
-        foreach (var updatedImage in eventArgs.updated)
+        foreach (ARTrackedImage updatedImage in eventArgs.updated)
         {
             // Handle updated event
+            Vector3 offset = updatedImage.size/2;
+            TrackableId trackableId = updatedImage.trackableId;
+            if(trackedAnchors.ContainsKey(trackableId) && trackedAnchors[trackableId]){
+                //Debug.Log("updatedImage: " + updatedImage.referenceImage.name);
+                if(updatedImage.referenceImage.name.Equals("upleft")){
+                    offset = new Vector3(-offset.x, offset.y);
+                }
+                else if(updatedImage.referenceImage.name.Equals("downleft")){
+                    offset = new Vector3(-offset.x, -offset.y);
+                }
+                else if(updatedImage.referenceImage.name.Equals("downright")){
+                    offset = new Vector3(offset.x, -offset.y);
+                }
+                //Debug.LogWarning("" + updatedImage.referenceImage.name + " off: " + offset);
+                if(trackedAnchors[trackableId].transform.position != updatedImage.transform.position + offset){
+                    trackedAnchors[trackableId].transform.position = updatedImage.transform.position + offset;
+                }
+            }
+            else{
+                CreateSubplaneAnchorByImage(updatedImage);
+            }
         }
 
-        foreach (var removedImage in eventArgs.removed)
+        foreach (ARTrackedImage removedImage in eventArgs.removed)
         {
             // Handle removed event
         }
     }
 
-    void Update(){
-        if(displayPosition == null)
-            return;
-        
-        float distance = Vector3.Distance(oggetto.transform.position, Camera.main.transform.position);
-        distanceTxt.text = distance + " m " + oggetto.transform.position.x + " " + oggetto.transform.position.y + " " + oggetto.transform.position.z;
-        //Debug.Log("BCZ distance: " + distance + " pos: " + oggetto.transform.position.x + " " + oggetto.transform.position.y + " " + oggetto.transform.position.z);
-        if(oggetto){
-            Debug.DrawLine(Camera.main.transform.position, oggetto.transform.position, Color.green);
-        }
+    public void CreateSubplaneAnchorByImage(ARTrackedImage newImage){
+        trackedImageObject = subplaneConfig.CreateSubplaneAnchor(newImage.transform.position);
+        trackedAnchors.Add(newImage.trackableId, trackedImageObject);
     }
+
+    public void ResetImageTrackingConfiguration(){
+        foreach(KeyValuePair<TrackableId, GameObject> entry in trackedAnchors){
+            Destroy(trackedAnchors[entry.Key]);
+        }
+        trackedAnchors.Clear();
+        m_TrackedImageManager.enabled = true;
+    }
+
+    public void DisableTrackingConfiguration(){
+        Debug.LogWarning("Disattivo imagetracking");
+        if(!m_TrackedImageManager){
+            Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
+            return;
+        }
+        //ResetImageTrackingConfiguration();
+        m_TrackedImageManager.enabled = false;
+    }
+
+    public void ActivateTrackingConfiguration(){
+        Debug.LogWarning("Attivo imagetracking");
+        if(!m_TrackedImageManager){
+            Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
+            return;
+        }
+        //ResetImageTrackingConfiguration();
+        m_TrackedImageManager.enabled = true;
+    }
+
 }

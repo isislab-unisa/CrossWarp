@@ -29,13 +29,13 @@ public class SubplaneAnchor : MonoBehaviour
     }
 
     public void IsUsePlane(){
-        if(FindFirstObjectByType<SubplaneConfig>().usePlanes){
-            GetComponent<ARTranslationInteractable>().enabled = true;
-            GetComponent<CustomARTranslateInteractable>().enabled = false;
-        }
-        else{
+        if(FindFirstObjectByType<SubplaneConfig>().configurationMode == SubplaneConfig.ConfigurationMode.InSpace){
             GetComponent<ARTranslationInteractable>().enabled = false;
             GetComponent<CustomARTranslateInteractable>().enabled = true;
+        }
+        else{
+            GetComponent<ARTranslationInteractable>().enabled = true;
+            GetComponent<CustomARTranslateInteractable>().enabled = false;
         }
     }
 }

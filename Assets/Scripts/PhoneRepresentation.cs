@@ -37,7 +37,7 @@ public class PhoneRepresentation : NetworkBehaviour
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
         
-        if(subplaneConfig.IsEndedConfig())
+        if(subplaneConfig.IsConfig())
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(touch.position);
@@ -71,7 +71,7 @@ public class PhoneRepresentation : NetworkBehaviour
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
         
-        if(subplaneConfig.IsEndedConfig())
+        if(subplaneConfig.IsConfig())
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(touch.position);

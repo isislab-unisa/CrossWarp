@@ -18,29 +18,9 @@ public class ARSphereController : NetworkBehaviour
         return false;
     }
 
-    public void GetReferenceToDesktopObject(){
-        PlayerRef otherPlayerRef;
-        Debug.Log("BCZ get reference to desktop object called");
-        Debug.Log("BCZ Runner? " + Runner != null);
-        Debug.Log("BCZ Runner: " + Runner.ActivePlayers);
-        Debug.Log("BCZ Runner.ActivePlayers: " + Runner.ActivePlayers);
-        foreach(PlayerRef player in Runner.ActivePlayers){
-            Debug.Log("BCZ other players: " + player);
-            if(player != Runner.LocalPlayer){
-                otherPlayerRef = player;
-                Debug.Log("BCZ players: " + player);
-                NetworkObject playerNetObj;
-                if(!Runner.TryGetPlayerObject(player, out playerNetObj)){
-                    Debug.Log("BCZ ERRORE NON C'è IL NETWORK OBJECT");
-                }
-                else{
-                    // posso cambiarlo in playernetobj?
-                    GameObject otherPlayerObj = Runner.GetPlayerObject(player).gameObject;
-                    Debug.Log("BCZ vediamo: " + otherPlayerObj);
-                    otherPlayer = otherPlayerObj.GetComponent<DesktopSphereController>();
-                }
-            }
-        }
+    public DesktopSphereController GetReferenceToDesktopObject(){
+        otherPlayer = FindObjectOfType<DesktopSphereController>();
+        return otherPlayer;
     }
     
     public override void Spawned(){

@@ -11,9 +11,13 @@ public class DesktopSphereController : NetworkBehaviour
     public GameObject phoneRepresentationPrefab;
     private GameObject selectedObject;
     public Dictionary<PlayerRef, GameObject> playersRepresentation {get; set;}
+    private int playersConfiguring = 0;
+    public GameObject ImageTrackingCanvasPrefab;
+    private GameObject ImageTrackingCanvasInstance;
 
     void Start()
     {
+        ImageTrackingCanvasInstance = Instantiate(ImageTrackingCanvasPrefab);
         playersRepresentation = new Dictionary<PlayerRef, GameObject>();
         // screen height in cm
         float screenHeight = (Screen.height/Screen.dpi)*2.54f;
@@ -27,33 +31,22 @@ public class DesktopSphereController : NetworkBehaviour
 
     void Update()
     {
-        
+
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void UpdatePositionRpc(Vector3 newPosition, Quaternion newRotation, bool isMirror, PlayerRef callingPlayer){
-        GameObject phoneRepresentation;
-        if(playersRepresentation.ContainsKey(callingPlayer)){
-            phoneRepresentation = playersRepresentation[callingPlayer];
-        }
-        else{
-            phoneRepresentation = Runner.Spawn(phoneRepresentationPrefab, Vector3.zero, Quaternion.identity).gameObject;
-            playersRepresentation.Add(callingPlayer, phoneRepresentation);
-            Color randomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-            phoneRepresentation.GetComponent<PhoneRepresentation>().interactionColor = randomColor;
-        }
-
-        Debug.Log("BCZ chiamata update position");
-        Debug.Log("isMirror: " + isMirror);
-        float z = newPosition.z;
-        if(isMirror){
-            z = -z;
-            newRotation = Quaternion.Euler(-newRotation.eulerAngles.x, -newRotation.eulerAngles.y, newRotation.eulerAngles.z);
-        }
-        z += Camera.main.nearClipPlane;
-        phoneRepresentation.transform.rotation = newRotation;
-        phoneRepresentation.transform.position = new Vector3(newPosition.x, newPosition.y, z);
+    public void ToggleConfiguringRpc(bool playerIsConfiguring){
+        Debug.Log("Players Configuring: " + playersConfiguring);
+        if(playerIsConfiguring)
+            playersConfiguring++;
+        else
+            playersConfiguring--;
+        if(playersConfiguring > 0)
+            ImageTrackingCanvasInstance.SetActive(true);
+        else
+            ImageTrackingCanvasInstance.SetActive(false);
     }
+
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void SendRemotePointRpc(Vector3 point, Vector3 direction, bool isMirror, PlayerRef callingPlayer, PhoneRepresentation callingPhone){

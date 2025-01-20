@@ -502,6 +502,53 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &2244871047325435122
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6625231133960932990}
+  - component: {fileID: 7063967540136364650}
+  m_Layer: 0
+  m_Name: ImageTrackingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6625231133960932990
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2244871047325435122}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -14.399994, y: -54.40001, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1949183853777729249}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7063967540136364650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2244871047325435122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1e217e2992db24f941ae782c7ea230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackedImageManager: {fileID: 0}
+  distanceTxt: {fileID: 0}
+  TrackedImagePrefab: {fileID: 2313961796309755148, guid: 9d5ab98bee9a4d74c99ab6bfa30112cb, type: 3}
 --- !u!1 &2502401612800571391
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,7 +562,6 @@ GameObject:
   - component: {fileID: 5128800537345319120}
   - component: {fileID: 2652651748128369289}
   - component: {fileID: 5099945165198690163}
-  - component: {fileID: 5562520885846976139}
   m_Layer: 5
   m_Name: SubplaneConfigUI
   m_TagString: Untagged
@@ -540,6 +586,7 @@ RectTransform:
   - {fileID: 1694085143244898313}
   - {fileID: 5207446310036549311}
   - {fileID: 3640046402169241512}
+  - {fileID: 6625231133960932990}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -631,18 +678,6 @@ MonoBehaviour:
   MoveOnPlaneToggle: {fileID: 6820986344127111116}
   usePlanes: 1
   isMirror: 0
---- !u!114 &5562520885846976139
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2502401612800571391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82009f431654b8b4b927b9ecdd1035fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4829041867384012018
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,7 +811,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 5562520885846976139}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: DisableTracking, Assembly-CSharp
         m_MethodName: StopTracking
         m_Mode: 1
@@ -1228,7 +1263,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 5562520885846976139}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: DisableTracking, Assembly-CSharp
         m_MethodName: StopTracking
         m_Mode: 1
