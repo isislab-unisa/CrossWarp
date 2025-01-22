@@ -27,7 +27,7 @@ public class PhoneRepresentation : NetworkBehaviour
         if (HasStateAuthority && Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
+            if (touch.phase == TouchPhase.Began /*&& selectedObject == null*/)
             {
                 HandleSingleTouch(touch);
             }
@@ -122,50 +122,53 @@ public class PhoneRepresentation : NetworkBehaviour
             Debug.DrawLine(transform.position, direction, interactionColor, 50);
         if (Physics.Raycast(ray, out RaycastHit hit)){
             if(hit.collider.tag.Equals("MovableObject")){
-                if(hit.collider.gameObject == selectedObject){
-                    selectedObject.GetComponent<MovableObject>().ReleaseSelection();
-                    selectedObject = null;
+                if(networkedSelectedObject == null){
+                    /*selectedObject = hit.collider.gameObject;
+                    selectedObject.GetComponent<Outline>().enabled = true;*/
+                    if(await hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(this)){
+                        networkedSelectedObject = hit.collider.gameObject.GetComponent<MovableObject>();
+                        Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
+                        UpdateSelectedObjectRPC(hit.collider.gameObject.GetComponent<NetworkObject>().Id);
+                        //selectedObject.GetComponent<MovableObject>().SetControlledByARRPC(false);
+                    }
+                }
+                else if(hit.collider.GetComponent<NetworkObject>().Id == networkedSelectedObject.GetComponent<NetworkObject>().Id){
+                    networkedSelectedObject.ReleaseSelection();
+                    networkedSelectedObject = null;
                     
                     ResetSelectedObjectRPC();
                     
                 }
-                else if(selectedObject != null){
+                else if(networkedSelectedObject != null){
                     // deselect old selectedObjecr
-                    selectedObject.GetComponent<MovableObject>().ReleaseSelection();
-                    if(selectedObject.GetComponent<NetworkObject>().HasStateAuthority)
-                        selectedObject.GetComponent<NetworkObject>().ReleaseStateAuthority();
+                    networkedSelectedObject.ReleaseSelection();
+                    if(networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
+                        networkedSelectedObject.GetComponent<NetworkObject>().ReleaseStateAuthority();
                     // select new object
                     /*selectedObject = hit.collider.gameObject;
                     selectedObject.GetComponent<Outline>().enabled = true;*/
                     if(await hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(this)){
-                        selectedObject = hit.collider.gameObject;
+                        networkedSelectedObject = hit.collider.gameObject.GetComponent<MovableObject>();
                         //selectedObject.GetComponent<NetworkObject>().Wa();
-                        Debug.Log("" + Runner.LocalPlayer + " hasSA: " + selectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                        UpdateSelectedObjectRPC(selectedObject.GetComponent<NetworkObject>().Id);
+                        Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
+                        UpdateSelectedObjectRPC(hit.collider.gameObject.GetComponent<NetworkObject>().Id);
                         //selectedObject.GetComponent<MovableObject>().SetControlledByARRPC(false);
                     }
                 }
-                else{
-                    /*selectedObject = hit.collider.gameObject;
-                    selectedObject.GetComponent<Outline>().enabled = true;*/
-                    if(await hit.collider.gameObject.GetComponent<MovableObject>().TrySelectObject(this)){
-                        selectedObject = hit.collider.gameObject;
-                        Debug.Log("" + Runner.LocalPlayer + " hasSA: " + selectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                        UpdateSelectedObjectRPC(selectedObject.GetComponent<NetworkObject>().Id);
-                        //selectedObject.GetComponent<MovableObject>().SetControlledByARRPC(false);
-                    }
-                }
+                /*else{
+                    
+                }*/
             }
             else{
-                if(selectedObject == null)
+                if(networkedSelectedObject == null)
                     //Instantiate(hitObjectPrefab, hit.point, Quaternion.identity);
                     Runner.Spawn(hitObjectPrefab, hit.point, Quaternion.identity);
                 else{
                     //selectedObject.transform.position = hit.point;
-                    if(!selectedObject.GetComponent<NetworkObject>().HasStateAuthority)
-                        await selectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
-                    Debug.Log("" + Runner.LocalPlayer + " hasSA: " + selectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                    selectedObject.GetComponent<MovableObject>().UpdateTransform(hit.point, false);
+                    if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
+                        await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+                    Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
+                    networkedSelectedObject.UpdateTransform(hit.point, false);
                     //selectedObject.transform.position = hit.point;
                     //selectedObject.GetComponent<MovableObject>().controlledByAR = false;
                     //selectedObject.GetComponent<MovableObject>().SetControlledByARRPC(false);
