@@ -19,6 +19,10 @@ public class PhoneRepresentation : NetworkBehaviour
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
         if(subplaneConfig.isMirror)
             return;
+        
+        // se non è ancora stato creato un subplane non vogliamo gestire i touch del giocatore
+        if(!subplaneConfig.GetSelectedSubplane())
+            return;
 
         if (HasStateAuthority && Input.touchCount > 0)
         {
@@ -27,8 +31,11 @@ public class PhoneRepresentation : NetworkBehaviour
             {
                 HandleSingleTouch(touch);
             }
-            /*if(touch.phase == TouchPhase.Moved){
+            /*else if(touch.phase == TouchPhase.Moved && selectedObject){
                 HandleTranslateTouch(touch);
+            }*/
+            /*else if(touch.phase == TouchPhase.Ended && selectedObject){
+                HandleSingleTouch(touch);
             }*/
         }
     }
@@ -231,14 +238,16 @@ public class PhoneRepresentation : NetworkBehaviour
             if(networkedSelectedObject == null){
                 NetworkObject spawned = Runner.Spawn(hitObjectPrefab, hit.point, Quaternion.identity);
                 //spawned.GetComponent<MovableObject>().SetControlledByARRPC(true);
+                // quando spawnato in locale deve avere settato il subplane attivo locale
+                spawned.GetComponent<MovableObject>().UpdateTransform(hit.point, true);
             }
             else{
                 if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
-                await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+                    await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
                 Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                //networkedSelectedObject.UpdateTransformRPC(hit.point, true);
-                networkedSelectedObject.transform.position = hit.point;
-                networkedSelectedObject.GetComponent<MovableObject>().controlledByAR = true;
+                networkedSelectedObject.UpdateTransform(hit.point, true);
+                //networkedSelectedObject.transform.position = hit.point;
+                //networkedSelectedObject.GetComponent<MovableObject>().controlledByAR = true;
                 //networkedSelectedObject.SetControlledByARRPC(true);
             }
         }        

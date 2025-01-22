@@ -24,6 +24,14 @@ public class ImageTrackingManager : MonoBehaviour
 
     private Dictionary<TrackableId, GameObject> trackedAnchors = new Dictionary<TrackableId, GameObject>();
 
+    void Start(){
+        if(!m_TrackedImageManager){
+            Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
+            return;
+        }
+        m_TrackedImageManager.enabled = false;
+    }
+
     void OnEnable(){
         if(!m_TrackedImageManager){
             Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
@@ -81,7 +89,7 @@ public class ImageTrackingManager : MonoBehaviour
 
         foreach (ARTrackedImage removedImage in eventArgs.removed)
         {
-            // Handle removed event
+            Debug.LogWarning("Rimossa immagine: " + removedImage.referenceImage.name);
         }
     }
 
@@ -92,9 +100,11 @@ public class ImageTrackingManager : MonoBehaviour
 
     public void ResetImageTrackingConfiguration(){
         foreach(KeyValuePair<TrackableId, GameObject> entry in trackedAnchors){
+            Debug.LogWarning("Distruggo: " + trackedAnchors[entry.Key]);
             Destroy(trackedAnchors[entry.Key]);
         }
         trackedAnchors.Clear();
+        Debug.LogWarning("Pulito il tracked anchors: " + trackedAnchors);
         m_TrackedImageManager.enabled = true;
     }
 

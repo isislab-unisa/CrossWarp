@@ -96,15 +96,12 @@ public class SubplaneConfig : MonoBehaviour
     public void OnConfigModeDpdChanged(){
         if(dropdown.options[dropdown.value].text == "Image Tracking"){
             configurationMode = ConfigurationMode.ImageTracking;
-            Debug.LogWarning("Porco demonio: " + configurationMode);
         }
         else if(dropdown.options[dropdown.value].text == "On Plane"){
             configurationMode = ConfigurationMode.OnPlane;
-            Debug.LogWarning("Porco demonio: " + configurationMode);
         }
         else if(dropdown.options[dropdown.value].text == "In Space"){
             configurationMode = ConfigurationMode.InSpace;
-            Debug.LogWarning("Porco demonio: " + configurationMode);
         }
         //OnConfigurationModeChanged();
     }
@@ -262,6 +259,7 @@ public class SubplaneConfig : MonoBehaviour
             //StopConfig();
             Debug.Log("BCZ chiamo createsubplane");
             CreateSubplane();
+            placementInteractable.enabled = false;
         }
 
         // se stiamo configurando ,non ci sono piani creati e stiamo configurando nello spazio allora creiamo anchor
@@ -311,6 +309,7 @@ public class SubplaneConfig : MonoBehaviour
                 }
             }*/
         }
+        // le anchor quando create con l'image tracking all'inizio vengono sempre instanziate sull'xr origin, questo porta problemi alla creazione dei subplane
         if(anchors[1].transform.position.x > anchors[2].transform.position.x){
             temp = anchors[1];
             anchors[1] = anchors[2];
