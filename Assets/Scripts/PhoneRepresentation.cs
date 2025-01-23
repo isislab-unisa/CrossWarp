@@ -7,11 +7,17 @@ using UnityEngine;
 public class PhoneRepresentation : NetworkBehaviour
 {
     public GameObject hitObjectPrefab;
+    [Networked]
     public Color interactionColor {get; set;}
     public GameObject selectedObject = null;
     [Networked, OnChangedRender(nameof(SelectedObjectChanged))]
     public MovableObject networkedSelectedObject {get; set;}
     private SubplaneConfig subplaneConfig;
+
+    public override void Spawned(){
+        if(HasStateAuthority)
+            interactionColor = Random.ColorHSV(0f, 1f, 0.5f, 0.5f, 0.9f, 0.9f);
+    }
 
     public override void FixedUpdateNetwork()
     {
@@ -117,9 +123,9 @@ public class PhoneRepresentation : NetworkBehaviour
         
         //Vector3 pointFromClipPlane = new Vector3(cameraMappedPoint.x, cameraMappedPoint.y, Camera.main.nearClipPlane);
         Ray ray = Camera.main.ViewportPointToRay(cameraMappedPoint);
-        Debug.DrawLine(ray.origin, ray.direction*5000, interactionColor, 50);
+        /*Debug.DrawLine(ray.origin, ray.direction*5000, interactionColor, 50);
         if(!isMirror)
-            Debug.DrawLine(transform.position, direction, interactionColor, 50);
+            Debug.DrawLine(transform.position, direction, interactionColor, 50);*/
         if (Physics.Raycast(ray, out RaycastHit hit)){
             if(hit.collider.tag.Equals("MovableObject")){
                 if(networkedSelectedObject == null){
@@ -262,7 +268,7 @@ public class PhoneRepresentation : NetworkBehaviour
     }
 
     public void SelectedObjectChanged(){
-        Debug.Log("Selezione cambiata: " + networkedSelectedObject + " SA: " + HasStateAuthority);
+        Debug.LogWarning("Selezione cambiata: " + networkedSelectedObject + " SA: " + HasStateAuthority);
         if(networkedSelectedObject == null)
             selectedObject = null;
         else

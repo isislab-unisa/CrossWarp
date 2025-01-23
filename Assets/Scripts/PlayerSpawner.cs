@@ -22,8 +22,6 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
                 Runner.SetPlayerObject(Runner.LocalPlayer, spawned);
                 Debug.Log("BCZ disabilito AR controller");
                 spawned.gameObject.GetComponent<DesktopSphereController>().enabled = true;
-                spawned.gameObject.GetComponent<ARSphereController>().enabled = false;
-                spawned.gameObject.GetComponent<DisplayConnector>().enabled = false;
                 return;
             }
             spawned = Runner.Spawn(ARPlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);

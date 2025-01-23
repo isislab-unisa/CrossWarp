@@ -9,6 +9,10 @@ public class MovableObject : NetworkBehaviour
 {
     [Networked]
     public PhoneRepresentation isSelectedBy {get; set;}
+    [Networked, OnChangedRender(nameof(OnSelectionColorChanged))]
+    public Color selectionColor {get; set;}
+    [Networked, OnChangedRender(nameof(OnSelectedChanged))]
+    public bool selected {get; set;}
     private bool isVisible = false;
     [Networked, OnChangedRender(nameof(OnControlledChanged))]
     public bool controlledByAR {get; set;}
@@ -18,6 +22,8 @@ public class MovableObject : NetworkBehaviour
     public Collider collider;
     [Networked]
     public Vector3 lastOffsetToSubplane {get; set;}
+    [Networked]
+    public Quaternion lastRotationOffsetToSubplane {get; set;}
     private GameObject activePhoneSubplane;
 
     
@@ -32,7 +38,8 @@ public class MovableObject : NetworkBehaviour
                     activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
                 else
                     activePhoneSubplane = null;
-                CalculateLastOffsetToSubplane();
+                lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+                lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
             }
         }
         if((GetComponent<NetworkObject>().Flags & NetworkObjectFlags.AllowStateAuthorityOverride) > 0)
@@ -81,15 +88,18 @@ public class MovableObject : NetworkBehaviour
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-            CalculateLastOffsetToSubplane();
+            lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+            lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
 
             Debug.Log("isSelectedBy: " + isSelectedBy);
             isSelectedBy = playerSelecting;
-            playerSelecting.SelectObject(this);
+            //playerSelecting.SelectObject(this);
             Debug.Log("isSelectedBy: " + isSelectedBy);
             //if(playerSelecting.GetComponent<PhoneRepresentation>())
                 //GetComponent<Outline>().OutlineColor = playerSelecting.interactionColor;
-            GetComponent<Outline>().enabled = true;
+            //GetComponent<Outline>().enabled = true;
+            selectionColor = playerSelecting.interactionColor;
+            selected = true;
             return true;
         }
         else if(isSelectedBy != playerSelecting){
@@ -102,9 +112,12 @@ public class MovableObject : NetworkBehaviour
 
     }
 
-    public void ReleaseSelection(){
+    public async void ReleaseSelection(){
+        if(!HasStateAuthority){
+            await GetComponent<NetworkObject>().WaitForStateAuthority();
+        }
         isSelectedBy = null;
-        GetComponent<Outline>().enabled = false;
+        selected = false;
     }
 
     // chiamata solo quando si interagisce con il display virtuale, 
@@ -116,8 +129,14 @@ public class MovableObject : NetworkBehaviour
         //GetComponent<NetworkTransform>().Teleport(newPosition);
         transform.position = newPosition;
 
+        SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
+            if(subplaneConfig)
+                activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
+            else
+                activePhoneSubplane = null;
+        lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
 
-        CalculateLastOffsetToSubplane(); 
         controlledByAR = isControlledByAR;
         Debug.Log("controllato da AR: " + controlledByAR);
         Debug.LogWarning("offsetTouSub: " + lastOffsetToSubplane);
@@ -154,6 +173,23 @@ public class MovableObject : NetworkBehaviour
         Debug.Log("controllato da AR: " + controlledByAR);
     }
 
+    public Vector3 CalculateLastOffsetToSubplane(){
+        Vector3 offset = Vector3.zero;
+        if(activePhoneSubplane)
+            offset = transform.position - activePhoneSubplane.transform.position;
+        
+        return offset;
+    }
+
+    public Quaternion CalculateLastRotationOffsetToSubplane(){
+
+        if(!activePhoneSubplane)
+            return Quaternion.identity;
+        
+        Quaternion rotation = Quaternion.FromToRotation(activePhoneSubplane.transform.forward, Vector3.forward);
+        return rotation;
+    }
+
     public void OnControlledChanged(){
         Debug.Log("ControlledByArChanged: " + controlledByAR);
     }
@@ -162,10 +198,12 @@ public class MovableObject : NetworkBehaviour
         transform.position = currentPosition;
     }
 
-    public void CalculateLastOffsetToSubplane(){
-        if(activePhoneSubplane)
-            lastOffsetToSubplane = transform.position - activePhoneSubplane.transform.position;
-        else 
-            lastOffsetToSubplane = Vector3.zero;
+    public void OnSelectionColorChanged(){
+        GetComponent<Outline>().OutlineColor = selectionColor;
     }
+
+    public void OnSelectedChanged(){
+        GetComponent<Outline>().enabled = selected;
+    }
+
 }
