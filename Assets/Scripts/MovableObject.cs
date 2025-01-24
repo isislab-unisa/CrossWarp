@@ -29,8 +29,10 @@ public class MovableObject : NetworkBehaviour
     
     public override void Spawned(){
         if(HasStateAuthority){
-            if(PlatformManager.IsDesktop())
+            if(PlatformManager.IsDesktop()){
                 controlledByAR = false;
+                lastRotationOffsetToSubplane = transform.rotation;
+            }
             else{
                 controlledByAR = true;
                 SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
@@ -65,8 +67,10 @@ public class MovableObject : NetworkBehaviour
             SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
             if(subplaneConfig){
                 GameObject localSubplane = subplaneConfig.GetSelectedSubplane();
-                if(localSubplane)
+                if(localSubplane){
                     transform.position = lastOffsetToSubplane + localSubplane.transform.position;
+                    //transform.rotation = lastRotationOffsetToSubplane * localSubplane.transform.rotation;
+                }
             }
         }
     }
@@ -184,9 +188,9 @@ public class MovableObject : NetworkBehaviour
     public Quaternion CalculateLastRotationOffsetToSubplane(){
 
         if(!activePhoneSubplane)
-            return Quaternion.identity;
+            return transform.rotation;
         
-        Quaternion rotation = Quaternion.FromToRotation(activePhoneSubplane.transform.forward, Vector3.forward);
+        Quaternion rotation = Quaternion.FromToRotation(transform.forward, activePhoneSubplane.transform.forward);
         return rotation;
     }
 

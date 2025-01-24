@@ -166,9 +166,14 @@ public class PhoneRepresentation : NetworkBehaviour
                 }*/
             }
             else{
-                if(networkedSelectedObject == null)
+                if(networkedSelectedObject == null){
                     //Instantiate(hitObjectPrefab, hit.point, Quaternion.identity);
-                    Runner.Spawn(hitObjectPrefab, hit.point, Quaternion.identity);
+                    Vector3 directionToPlayer = transform.position - hit.point;
+                    directionToPlayer = new Vector3(directionToPlayer.x, 0, directionToPlayer.z);
+                    Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+                    //lookRotation = Quaternion.FromToRotation(directionToPlayer, transform.forward);
+                    Runner.Spawn(hitObjectPrefab, hit.point, lookRotation);
+                }
                 else{
                     //selectedObject.transform.position = hit.point;
                     if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
@@ -245,7 +250,11 @@ public class PhoneRepresentation : NetworkBehaviour
         }
         else{
             if(networkedSelectedObject == null){
-                NetworkObject spawned = Runner.Spawn(hitObjectPrefab, hit.point, Quaternion.identity);
+                Vector3 directionToPlayer = Camera.main.transform.position - hit.point;
+                directionToPlayer = new Vector3(directionToPlayer.x, 0, directionToPlayer.z);
+                Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+                //lookRotation = Quaternion.FromToRotation(directionToPlayer, Camera.main.transform.forward);
+                NetworkObject spawned = Runner.Spawn(hitObjectPrefab, hit.point, lookRotation);
                 //spawned.GetComponent<MovableObject>().SetControlledByARRPC(true);
                 // quando spawnato in locale deve avere settato il subplane attivo locale
                 spawned.GetComponent<MovableObject>().UpdateTransform(hit.point, true);

@@ -38,9 +38,8 @@ public class ARSphereController : NetworkBehaviour
     public override void FixedUpdateNetwork()
     {
         Camera main = Camera.main;
-        if(Input.touchCount > 0){
-            Touch touch = Input.GetTouch(0);
-            if(!CheckReferenceToDesktopObject())
+        
+        if(!CheckReferenceToDesktopObject())
                 GetReferenceToDesktopObject();
             if(CheckReferenceToDesktopObject()){
                 move(main.transform.position, main.transform.rotation);
@@ -51,7 +50,6 @@ public class ARSphereController : NetworkBehaviour
             else{
                 Debug.Log("BCZ Manca la reference all'object desktop");
             }
-        }
     }
 
     public void move(Vector3 newPosition, Quaternion newRotation){
@@ -112,20 +110,4 @@ public class ARSphereController : NetworkBehaviour
         Quaternion rotation = Quaternion.FromToRotation(selectedSubplane.transform.forward, Vector3.forward);
         return rotation;
     }
-
-    /*public void MoveSelectedObject(Vector2 point){
-        if(!subplaneConfig)
-            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
-        if(subplaneConfig.IsConfig())
-            return;
-        
-        /*Ray ray = Camera.main.ScreenPointToRay(point);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {*/
-            /*
-            PhoneRepresentation myPhoneRepresentation = GetComponent<PhoneRepresentation>();//otherPlayer.playersRepresentation[Runner.LocalPlayer].GetComponent<PhoneRepresentation>();
-            myPhoneRepresentation.SendLocalPoint(point, Vector3.forward);
-            myPhoneRepresentation.networkedSelectedObject.GetComponent<MovableObject>().controlledByAR = true;
-        //}
-    }*/ 
 }

@@ -287,7 +287,7 @@ public class SubplaneConfig : MonoBehaviour
     }
 
     private void CreateSubplane(){
-        OrderAnchors();
+        //OrderAnchors();
         GameObject subplane = Instantiate(subplanePrefab, anchors[0].transform.position, Quaternion.identity);
         createdSubplanes.Add(subplane);
         subplane.GetComponent<Subplane>().SetAnchors(anchors);

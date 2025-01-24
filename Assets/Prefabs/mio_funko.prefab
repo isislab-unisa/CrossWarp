@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 255820149337872604}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: -0, y: 0.0475, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4632653851492628202}
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 90, z: 0}
 --- !u!33 &7532525787673935568
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -196,7 +196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8941350250810633950}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
@@ -204,7 +204,7 @@ Transform:
   - {fileID: 2187470261927552730}
   - {fileID: 4039282450281738405}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-892142543185285618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,8 +307,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isSelectedBy: {fileID: 0}
+  _selectionColor: {r: 0, g: 0, b: 0, a: 0}
+  _selected: 0
   _controlledByAR: 0
   _currentPosition: {x: 0, y: 0, z: 0}
   meshRenderer: {fileID: 8211794927103748375}
   collider: {fileID: 2358519997444331972}
   _lastOffsetToSubplane: {x: 0, y: 0, z: 0}
+  _lastRotationOffsetToSubplane: {x: 0, y: 0, z: 0, w: 0}
