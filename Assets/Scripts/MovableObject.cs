@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
 using Unity.VisualScripting;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 
 public class MovableObject : NetworkBehaviour
@@ -40,8 +41,8 @@ public class MovableObject : NetworkBehaviour
                     activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
                 else
                     activePhoneSubplane = null;
-                lastOffsetToSubplane = CalculateLastOffsetToSubplane();
                 lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+                lastOffsetToSubplane = CalculateLastOffsetToSubplane();
             }
         }
         if((GetComponent<NetworkObject>().Flags & NetworkObjectFlags.AllowStateAuthorityOverride) > 0)
@@ -68,10 +69,13 @@ public class MovableObject : NetworkBehaviour
             if(subplaneConfig){
                 GameObject localSubplane = subplaneConfig.GetSelectedSubplane();
                 if(localSubplane){
-                    transform.position = lastOffsetToSubplane + localSubplane.transform.position;
-                    //transform.rotation = lastRotationOffsetToSubplane * localSubplane.transform.rotation;
+                    transform.position = localSubplane.transform.TransformPoint(lastOffsetToSubplane);
+                    transform.rotation = localSubplane.transform.rotation * lastRotationOffsetToSubplane;
                 }
             }
+        }
+        else{
+            transform.rotation = Camera.main.transform.rotation * lastRotationOffsetToSubplane;
         }
     }
 
@@ -86,14 +90,14 @@ public class MovableObject : NetworkBehaviour
                 await GetComponent<NetworkObject>().WaitForStateAuthority();
             }
 
-            // una volta che viene selezionato da qualcun altro cambio l'offset del subplane
+            // una volta che viene selezionato da qualcun altro cambio l'offset in posizione e rotazione del subplane
             SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
             if(subplaneConfig)
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-            lastOffsetToSubplane = CalculateLastOffsetToSubplane();
             lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+            lastOffsetToSubplane = CalculateLastOffsetToSubplane();
 
             Debug.Log("isSelectedBy: " + isSelectedBy);
             isSelectedBy = playerSelecting;
@@ -127,10 +131,6 @@ public class MovableObject : NetworkBehaviour
     // chiamata solo quando si interagisce con il display virtuale, 
     public void UpdateTransform(Vector3 newPosition, bool isControlledByAR){
         Debug.Log("Hanno chiamato update transform: " + newPosition);
-        //currentPosition = newPosition;
-
-        
-        //GetComponent<NetworkTransform>().Teleport(newPosition);
         transform.position = newPosition;
 
         SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
@@ -138,8 +138,8 @@ public class MovableObject : NetworkBehaviour
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-        lastOffsetToSubplane = CalculateLastOffsetToSubplane();
         lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+        lastOffsetToSubplane = CalculateLastOffsetToSubplane();
 
         controlledByAR = isControlledByAR;
         // Debug.Log("controllato da AR: " + controlledByAR);
@@ -180,17 +180,19 @@ public class MovableObject : NetworkBehaviour
     public Vector3 CalculateLastOffsetToSubplane(){
         Vector3 offset = Vector3.zero;
         if(activePhoneSubplane)
-            offset = transform.position - activePhoneSubplane.transform.position;
+            offset = activePhoneSubplane.transform.InverseTransformPoint(transform.position);
         
-        return offset;
+        return  offset;
     }
 
     public Quaternion CalculateLastRotationOffsetToSubplane(){
-
+        if(PlatformManager.IsDesktop())
+            return Quaternion.Inverse(Camera.main.transform.rotation) * transform.rotation;
         if(!activePhoneSubplane)
-            return transform.rotation;
-        
-        Quaternion rotation = Quaternion.FromToRotation(transform.forward, activePhoneSubplane.transform.forward);
+            return Quaternion.identity;
+
+        Quaternion rotation = Quaternion.Inverse(activePhoneSubplane.transform.rotation) * transform.rotation;
+
         return rotation;
     }
 
