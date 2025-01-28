@@ -82,23 +82,6 @@ public class ARSphereController : NetworkBehaviour
         startPosition = new Vector3(0, startPosition.y + 1);
     }
 
-    public void SendPointToDesktop(Vector3 point, Vector3 direction){
-        Debug.Log("BCZ sendpoint id:" + Id);
-        direction = GetRotationRelativeToSelectedSubplane() * direction;
-        bool isMirror = false;
-        if(subplaneConfig)
-            isMirror = subplaneConfig.isMirror;
-        
-        if(!CheckReferenceToDesktopObject())
-            GetReferenceToDesktopObject();
-        if(CheckReferenceToDesktopObject()){
-            otherPlayer.SendRemotePointRpc(point, direction, isMirror, Runner.LocalPlayer, GetComponent<PhoneRepresentation>());
-        }
-        else{
-            Debug.Log("BCZ Manca la reference all'object desktop");
-        }
-    }
-
     private Quaternion GetRotationRelativeToSelectedSubplane(){
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();

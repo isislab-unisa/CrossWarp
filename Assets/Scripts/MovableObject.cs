@@ -142,11 +142,11 @@ public class MovableObject : NetworkBehaviour
         lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
 
         controlledByAR = isControlledByAR;
-        Debug.Log("controllato da AR: " + controlledByAR);
-        Debug.LogWarning("offsetTouSub: " + lastOffsetToSubplane);
-        Debug.LogWarning("phone relative: " + newPosition);
-        Debug.LogWarning("renderPos: " + (lastOffsetToSubplane + activePhoneSubplane.transform.position));
-        StampaPosizioneRPC(lastOffsetToSubplane, newPosition);
+        // Debug.Log("controllato da AR: " + controlledByAR);
+        // Debug.LogWarning("offsetTouSub: " + lastOffsetToSubplane);
+        // Debug.LogWarning("phone relative: " + newPosition);
+        // Debug.LogWarning("renderPos: " + (lastOffsetToSubplane + activePhoneSubplane.transform.position));
+        // StampaPosizioneRPC(lastOffsetToSubplane, newPosition);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
