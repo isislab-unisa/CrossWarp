@@ -25,14 +25,19 @@ public class MovableObject : NetworkBehaviour
     public Vector3 lastOffsetToSubplane {get; set;}
     [Networked]
     public Quaternion lastRotationOffsetToSubplane {get; set;}
+    [Networked]
+    public Vector3 networkedScale {get; set;}
     private GameObject activePhoneSubplane;
+    public float minScale = 0.25f;
+    public float maxScale = 2.5f;
 
     
     public override void Spawned(){
         if(HasStateAuthority){
             if(PlatformManager.IsDesktop()){
                 controlledByAR = false;
-                lastRotationOffsetToSubplane = transform.rotation;
+                lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+                lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
             }
             else{
                 controlledByAR = true;
@@ -42,8 +47,9 @@ public class MovableObject : NetworkBehaviour
                 else
                     activePhoneSubplane = null;
                 lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-                lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+                lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
             }
+            networkedScale = transform.localScale;
         }
         if((GetComponent<NetworkObject>().Flags & NetworkObjectFlags.AllowStateAuthorityOverride) > 0)
             Debug.LogWarning("AllowStateAuthOverride attivato");
@@ -69,13 +75,18 @@ public class MovableObject : NetworkBehaviour
             if(subplaneConfig){
                 GameObject localSubplane = subplaneConfig.GetSelectedSubplane();
                 if(localSubplane){
-                    transform.position = localSubplane.transform.TransformPoint(lastOffsetToSubplane);
-                    transform.rotation = localSubplane.transform.rotation * lastRotationOffsetToSubplane;
+                    transform.position = Vector3.Lerp(transform.position, localSubplane.transform.TransformPoint(lastOffsetToSubplane), 0.5f);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, localSubplane.transform.rotation * lastRotationOffsetToSubplane, 0.5f);
                 }
             }
         }
         else{
-            transform.rotation = Camera.main.transform.rotation * lastRotationOffsetToSubplane;
+            transform.position = Vector3.Lerp(transform.position, Camera.main.transform.TransformPoint(lastOffsetToSubplane), 0.5f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Camera.main.transform.rotation * lastRotationOffsetToSubplane, 0.5f);
+        }
+
+        if(networkedScale != null && transform.localScale != networkedScale){
+            transform.localScale = Vector3.Lerp(transform.localScale, networkedScale, 0.5f);
         }
     }
 
@@ -97,7 +108,7 @@ public class MovableObject : NetworkBehaviour
             else
                 activePhoneSubplane = null;
             lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-            lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+            lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
 
             Debug.Log("isSelectedBy: " + isSelectedBy);
             isSelectedBy = playerSelecting;
@@ -128,10 +139,9 @@ public class MovableObject : NetworkBehaviour
         selected = false;
     }
 
-    // chiamata solo quando si interagisce con il display virtuale, 
     public void UpdateTransform(Vector3 newPosition, bool isControlledByAR){
         Debug.Log("Hanno chiamato update transform: " + newPosition);
-        transform.position = newPosition;
+        //transform.position = newPosition;
 
         SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
             if(subplaneConfig)
@@ -139,7 +149,7 @@ public class MovableObject : NetworkBehaviour
             else
                 activePhoneSubplane = null;
         lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-        lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+        lastOffsetToSubplane = CalculateLastOffsetToSubplane(newPosition);
 
         controlledByAR = isControlledByAR;
         // Debug.Log("controllato da AR: " + controlledByAR);
@@ -147,6 +157,38 @@ public class MovableObject : NetworkBehaviour
         // Debug.LogWarning("phone relative: " + newPosition);
         // Debug.LogWarning("renderPos: " + (lastOffsetToSubplane + activePhoneSubplane.transform.position));
         // StampaPosizioneRPC(lastOffsetToSubplane, newPosition);
+    }
+
+    public void UpdateRotation(float rotationAngle){
+        Debug.Log("Hanno chiamato update rotation: " + rotationAngle);
+        transform.rotation *= Quaternion.AngleAxis(rotationAngle, transform.up);
+
+        SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
+            if(subplaneConfig)
+                activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
+            else
+                activePhoneSubplane = null;
+        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+        //lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+    }
+
+    public void UpdateRotation(float rotationAngle, Vector3 rotationAxis){
+        Debug.Log("Hanno chiamato update rotation: " + rotationAngle);
+        transform.rotation *= Quaternion.AngleAxis(rotationAngle, rotationAxis);
+
+        SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
+            if(subplaneConfig)
+                activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
+            else
+                activePhoneSubplane = null;
+        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+        //lastOffsetToSubplane = CalculateLastOffsetToSubplane();
+
+    }
+
+    public void UpdateScale(Vector3 newScale){
+        Debug.Log("Hanno chiamato update scale: " + newScale);
+        networkedScale = newScale;
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -177,12 +219,15 @@ public class MovableObject : NetworkBehaviour
         Debug.Log("controllato da AR: " + controlledByAR);
     }
 
-    public Vector3 CalculateLastOffsetToSubplane(){
-        Vector3 offset = Vector3.zero;
-        if(activePhoneSubplane)
-            offset = activePhoneSubplane.transform.InverseTransformPoint(transform.position);
+    public Vector3 CalculateLastOffsetToSubplane(Vector3 nextPosition){
+        if(PlatformManager.IsDesktop())
+            return Camera.main.transform.InverseTransformPoint(nextPosition);
+        if(!activePhoneSubplane)
+            return Vector3.zero;
+
+        Vector3 offset = activePhoneSubplane.transform.InverseTransformPoint(nextPosition);
         
-        return  offset;
+        return offset;
     }
 
     public Quaternion CalculateLastRotationOffsetToSubplane(){

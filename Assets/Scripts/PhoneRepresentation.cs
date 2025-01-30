@@ -20,13 +20,26 @@ public class PhoneRepresentation : NetworkBehaviour
     private XRBaseInteractor xRBaseInteractor;
     private ARGestureInteractor arGestureInteractor;
     public bool isDragging;
-    public bool isTwoFingerDragging;
     private float dragGestureUpdateInterval = 1f;
     private float dragGestureLastUpdate;
+    private float hitOnSubplaneThreshold = 0.02f;
+    private Vector3 lastHitOnSubplane;
     private DragGesture currentDragGesture;
+    public bool isTwoFingerDragging;
     private float twoFingerDragGestureUpdateInterval = 1f;
     private float twoFingerDragGestureLastUpdate;
     private TwoFingerDragGesture currentTwoFingerDragGesture;
+    public bool isTwisting;
+    private float twistGestureUpdateInterval = 1f;
+    private float twistGestureLastUpdate;
+    public float twistGestureRotateRate = 2.5f;
+    private TwistGesture currentTwistGesture;
+    
+    public bool isPinching;
+    private float pinchGestureUpdateInterval = 1f;
+    private float pinchGestureLastUpdate;
+    public float pinchGestureScaleRate = 0.0001f;
+    private PinchGesture currentPinchGesture;
 
     public override void Spawned(){
         if(HasStateAuthority){
@@ -34,12 +47,21 @@ public class PhoneRepresentation : NetworkBehaviour
             xRBaseInteractor = FindObjectOfType<XRBaseInteractor>();
             arGestureInteractor = FindObjectOfType<ARGestureInteractor>();
 
-            arGestureInteractor.dragGestureRecognizer.slopInches = 0.1f;
+            // la drag gesture inizia se slopinches è maggiore di 0.1
+            arGestureInteractor.dragGestureRecognizer.slopInches = 0.075f;
+
+            // la tap gesture viene cancellata se slopinches è maggiore di 0.05 o se il tap dura più di 0.5s
+            arGestureInteractor.tapGestureRecognizer.slopInches = 0.1f;
+            arGestureInteractor.tapGestureRecognizer.durationSeconds = 0.5f;
+
             arGestureInteractor.twoFingerDragGestureRecognizer.slopInches = 0.1f;
+
 
             arGestureInteractor.tapGestureRecognizer.onGestureStarted += TapGestureStart;
             arGestureInteractor.dragGestureRecognizer.onGestureStarted += DragGestureStart;
             arGestureInteractor.twoFingerDragGestureRecognizer.onGestureStarted += TwoFingerDragGestureStart;
+            arGestureInteractor.twistGestureRecognizer.onGestureStarted += TwistGestureStart;
+            arGestureInteractor.pinchGestureRecognizer.onGestureStarted += PinchGestureStart;
             
         }
     }
@@ -57,6 +79,20 @@ public class PhoneRepresentation : NetworkBehaviour
             {
                 twoFingerDragGestureLastUpdate = Time.deltaTime;
                 currentTwoFingerDragGesture.onUpdated += HandleTwoFingerDrag;
+            }
+        }
+        if(isTwisting && currentTwistGesture != null){
+            if(twistGestureLastUpdate + twistGestureUpdateInterval <= Time.deltaTime)
+            {
+                twistGestureLastUpdate = Time.deltaTime;
+                currentTwistGesture.onUpdated += HandleTwist;
+            }
+        }
+        if(isPinching && currentPinchGesture != null){
+            if(pinchGestureLastUpdate + pinchGestureUpdateInterval <= Time.deltaTime)
+            {
+                pinchGestureLastUpdate = Time.deltaTime;
+                currentPinchGesture.onUpdated += HandlePinch;
             }
         }
     }
@@ -180,6 +216,28 @@ public class PhoneRepresentation : NetworkBehaviour
         }
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public async void ContinousRaycastFromVRCameraRPC(Vector3 cameraMappedPoint){
+        if(!PlatformManager.IsDesktop())
+            return;
+        if(!networkedSelectedObject)
+            return;
+        LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+        if(layerMask == -1){
+            Debug.LogError("Il LayerMask MovabeleObjects non è definito");
+        }
+        // esclusione del layer di movableobjects
+        Debug.LogWarning("CamMapPnt: " + cameraMappedPoint);
+        layerMask = ~layerMask;
+        Ray ray = Camera.main.ViewportPointToRay(cameraMappedPoint);
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity ,layerMask)){
+            if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
+                await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+            //Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
+            networkedSelectedObject.UpdateTransform(hit.point, false);
+        }
+    }
+
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void UpdateSelectedObjectRPC(NetworkId selectedId){
         NetworkObject obj;
@@ -234,7 +292,7 @@ public class PhoneRepresentation : NetworkBehaviour
         }        
     }
 
-        // true: action performed successfully
+    // true: action performed successfully
     // false: something went wrong
     public async Task<bool> TrySelectObject(MovableObject obj)
     {
@@ -278,18 +336,22 @@ public class PhoneRepresentation : NetworkBehaviour
 
     public void TapGestureStart(TapGesture gesture){
         Debug.LogWarning("Chiamata HandleARTap");
+        
+        if(isDragging || isTwoFingerDragging || isTwisting || isPinching)
+            return;
         gesture.onFinished += HandleARTap;
     }
 
     public void HandleARTap(TapGesture gesture){
         Debug.LogWarning("Finita la gesture Tap. isDragging: " + isDragging);
+        Debug.LogWarning("Tap isCanceled? " + gesture.isCanceled);
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
         
         if(subplaneConfig.IsConfig())
             return;
         
-        if(isDragging || isTwoFingerDragging)
+        if(gesture.isCanceled || isDragging || isTwoFingerDragging || isTwisting || isPinching)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(gesture.startPosition);
@@ -322,8 +384,17 @@ public class PhoneRepresentation : NetworkBehaviour
         dragGestureLastUpdate = Time.deltaTime;
         isDragging = true;
         currentDragGesture = dragGesture;
-        dragGesture.onUpdated += HandleARDrag;
+        Ray ray = Camera.main.ScreenPointToRay(dragGesture.position);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if(hit.collider.GetComponent<Subplane>())
+                dragGesture.onUpdated += HandleDragOnSubplane;
+            else if(hit.collider.GetComponent<MovableObject>() == networkedSelectedObject)
+                dragGesture.onUpdated += HandleARDrag;
+        }
+
         dragGesture.onFinished += ARDragEnded;
+        
     }
 
     // spostare l'oggetto selezionato nel punto colpito dal raycast
@@ -349,9 +420,34 @@ public class PhoneRepresentation : NetworkBehaviour
         currentDragGesture = dragGesture;
     }
 
+    private async void HandleDragOnSubplane(DragGesture gesture){
+        if(!networkedSelectedObject)
+            return;
+        LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+        if(layerMask == -1){
+            Debug.LogError("Il LayerMask MovabeleObjects non è definito");
+        }
+        // esclusione del layer di movableobjects
+        layerMask = ~layerMask;
+        Ray ray = Camera.main.ScreenPointToRay(gesture.position);
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity ,layerMask))
+        {
+            Subplane hittedSubplane = hit.collider.GetComponent<Subplane>();
+            if(hittedSubplane){
+                Vector3 cameraMappedPoint = hittedSubplane.NormalizedHitPoint(hit.transform.InverseTransformPoint(hit.point));
+                if(lastHitOnSubplane == null || Vector3.Distance(cameraMappedPoint, lastHitOnSubplane) >= hitOnSubplaneThreshold){
+                    ContinousRaycastFromVRCameraRPC(cameraMappedPoint);
+                    Debug.LogWarning("distanza: " + Vector3.Distance(cameraMappedPoint, lastHitOnSubplane));
+                    lastHitOnSubplane = cameraMappedPoint;
+                }
+            }
+        }
+        currentDragGesture = gesture;
+    }
+
     // fine drag gesture
     private void ARDragEnded(DragGesture dragGesture){
-        Debug.Log($"stopped drag");
+        Debug.Log("stopped drag");
         isDragging = false;
         dragGesture.onUpdated -= HandleARDrag;
         dragGesture.onFinished -= ARDragEnded;
@@ -375,17 +471,120 @@ public class PhoneRepresentation : NetworkBehaviour
     }
 
     private void TwoFingerEnded(TwoFingerDragGesture gesture){
-        Debug.Log($"stopped two finger drag");
+        Debug.Log("stopped two finger drag");
         isTwoFingerDragging = false;
         currentTwoFingerDragGesture = null;
         gesture.onUpdated -= HandleTwoFingerDrag;
         gesture.onFinished -= TwoFingerEnded;
+        if(isPinching || isTwisting)
+            return;
         if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f < gesture.position.y){
             Debug.LogWarning("push in");
         }
         else if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f > gesture.position.y){
             Debug.LogWarning("pull out");
         }
+    }
+
+    //TWIST GESTURE HANDLING
+
+    private void TwistGestureStart(TwistGesture gesture){
+        if(!networkedSelectedObject)
+            return;
+        twistGestureLastUpdate = Time.deltaTime;
+        isTwisting = true;
+        currentTwistGesture = gesture;
+        gesture.onUpdated += HandleTwist;
+        gesture.onFinished += TwistEnded;
+    }
+
+    private async void HandleTwist(TwistGesture gesture){
+        //Debug.Log($"TwoFDrag da {gesture.startPosition1} a {gesture.position}");
+        if(!networkedSelectedObject)
+            return;
+        if(isPinching)
+            return;
+        Debug.LogWarning("Rotation: " + gesture.deltaRotation);
+        // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
+        // se si trova nel mondo aumentato
+        if(networkedSelectedObject.controlledByAR){
+            networkedSelectedObject.UpdateRotation(-gesture.deltaRotation * twistGestureRotateRate);
+        }
+        // altrimenti se è nel mondo virtuale
+        else{
+            if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
+                await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+            networkedSelectedObject.UpdateRotation(-gesture.deltaRotation * twistGestureRotateRate);
+        }
+    }
+
+    private void TwistEnded(TwistGesture gesture){
+        Debug.Log("stopped twist");
+        isTwisting = false;
+        currentTwistGesture = null;
+        gesture.onUpdated -= HandleTwist;
+        gesture.onFinished -= TwistEnded;
+    }
+
+    //PINCH GESTURE HANDLING
+
+    private void PinchGestureStart(PinchGesture gesture){
+        if(!networkedSelectedObject)
+            return;
+        pinchGestureLastUpdate = Time.deltaTime;
+        isPinching = true;
+        currentPinchGesture = gesture;
+        gesture.onUpdated += HandlePinch;
+        gesture.onFinished += PinchEnded;
+    }
+
+    private async void HandlePinch(PinchGesture gesture){
+        //Debug.Log($"TwoFDrag da {gesture.startPosition1} a {gesture.position}");
+        if(!networkedSelectedObject)
+            return;
+            
+        if(isTwisting)
+            return;
+        Debug.LogWarning("Gap: " + gesture.gap);
+        Debug.LogWarning("GapDelta: " + gesture.gapDelta);
+        // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
+        // se si trova nel mondo aumentato
+        if(networkedSelectedObject.controlledByAR){
+            networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
+        }
+        // altrimenti se è nel mondo virtuale
+        else{
+            if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
+                await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+            networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
+        }
+    }
+
+    private Vector3 GetScaleByPinchGap(float gap){
+        
+        float scaleValue = networkedSelectedObject.transform.localScale.x;
+        float max = networkedSelectedObject.maxScale;
+        float min = networkedSelectedObject.minScale;
+
+        if(scaleValue + gap > max){
+            scaleValue = max;
+        }
+        else if(scaleValue + gap < min){
+            scaleValue = min;
+        }
+        else{
+            scaleValue += gap;
+        }
+
+        return new Vector3(scaleValue, scaleValue, scaleValue);
+    }
+
+    private void PinchEnded(PinchGesture gesture){
+        Debug.Log("stopped pinch");
+        isPinching = false;
+        currentPinchGesture = null;
+        gesture.onUpdated -= HandlePinch;
+        gesture.onFinished -= PinchEnded;
     }
 
     /*public void OnNetworkSelectedObjectChanged(){
