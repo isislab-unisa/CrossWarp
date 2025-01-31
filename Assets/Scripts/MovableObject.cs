@@ -6,6 +6,13 @@ using Unity.VisualScripting;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 
+public enum MovableObjectState {
+        inAR,
+        inVR,
+        TransitioningToAR,
+        TransitioningToVR
+    }
+
 public class MovableObject : NetworkBehaviour
 {
     [Networked]
@@ -14,11 +21,8 @@ public class MovableObject : NetworkBehaviour
     public Color selectionColor {get; set;}
     [Networked, OnChangedRender(nameof(OnSelectedChanged))]
     public bool selected {get; set;}
-    private bool isVisible = false;
-    [Networked, OnChangedRender(nameof(OnControlledChanged))]
-    public bool controlledByAR {get; set;}
-    [Networked, OnChangedRender(nameof(OnCurrentPositionChanged))]
-    public Vector3 currentPosition {get; set;}
+    [Networked]
+    public MovableObjectState worldState {get; set;}
     public MeshRenderer meshRenderer;
     public Collider collider;
     [Networked]
@@ -30,43 +34,48 @@ public class MovableObject : NetworkBehaviour
     private GameObject activePhoneSubplane;
     public float minScale = 0.25f;
     public float maxScale = 2.5f;
+    public GameObject particleEffectsPrefab;
+    public GameObject particleEffects;
+
+
+    public Transition transition;
 
     
     public override void Spawned(){
+        UpdateWorldState();
         if(HasStateAuthority){
-            if(PlatformManager.IsDesktop()){
-                controlledByAR = false;
-                lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-                lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
-            }
-            else{
-                controlledByAR = true;
+            if(!PlatformManager.IsDesktop()){
                 SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
                 if(subplaneConfig)
                     activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
                 else
                     activePhoneSubplane = null;
-                lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-                lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
             }
+            lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+            lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
             networkedScale = transform.localScale;
         }
         if((GetComponent<NetworkObject>().Flags & NetworkObjectFlags.AllowStateAuthorityOverride) > 0)
             Debug.LogWarning("AllowStateAuthOverride attivato");
+        transition = new Transition(this);
+
+        particleEffects = Instantiate(particleEffectsPrefab, transform);
+        particleEffects.transform.parent = transform;
+        particleEffects.GetComponent<ParticleSystem>().Play();
     }
 
     void Update()
     {
-        if(PlatformManager.IsDesktop() && !controlledByAR){
+        if(PlatformManager.IsDesktop() && worldState == MovableObjectState.inVR){
             SetShowing(true);
         }
-        else if(PlatformManager.IsDesktop() && controlledByAR){
+        else if(PlatformManager.IsDesktop() && worldState == MovableObjectState.inAR){
             SetShowing(false);
         }
-        else if(!PlatformManager.IsDesktop() && controlledByAR){
+        else if(!PlatformManager.IsDesktop() && worldState == MovableObjectState.inAR){
             SetShowing(true);
         }
-        else if(!PlatformManager.IsDesktop() && !controlledByAR){
+        else if(!PlatformManager.IsDesktop() && worldState == MovableObjectState.inVR){
             SetShowing(false);
         }
 
@@ -95,11 +104,24 @@ public class MovableObject : NetworkBehaviour
         collider.enabled = showing;
     }
 
+    private void UpdateWorldState(){
+        if(worldState == MovableObjectState.TransitioningToAR || worldState == MovableObjectState.TransitioningToVR)
+            return;
+        if(HasStateAuthority){
+            if(PlatformManager.IsDesktop())
+                worldState = MovableObjectState.inVR;
+            else
+                worldState = MovableObjectState.inAR;
+        }
+        Debug.LogWarning("worldState: " + worldState);
+    }
+
     public async Task<bool> TrySelectObject(PhoneRepresentation playerSelecting){
         if(isSelectedBy == null){
             if(!HasStateAuthority){
                 await GetComponent<NetworkObject>().WaitForStateAuthority();
             }
+            UpdateWorldState();
 
             // una volta che viene selezionato da qualcun altro cambio l'offset in posizione e rotazione del subplane
             SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
@@ -139,7 +161,7 @@ public class MovableObject : NetworkBehaviour
         selected = false;
     }
 
-    public void UpdateTransform(Vector3 newPosition, bool isControlledByAR){
+    public void UpdateTransform(Vector3 newPosition){
         Debug.Log("Hanno chiamato update transform: " + newPosition);
         //transform.position = newPosition;
 
@@ -151,7 +173,7 @@ public class MovableObject : NetworkBehaviour
         lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
         lastOffsetToSubplane = CalculateLastOffsetToSubplane(newPosition);
 
-        controlledByAR = isControlledByAR;
+        UpdateWorldState();
         // Debug.Log("controllato da AR: " + controlledByAR);
         // Debug.LogWarning("offsetTouSub: " + lastOffsetToSubplane);
         // Debug.LogWarning("phone relative: " + newPosition);
@@ -191,6 +213,24 @@ public class MovableObject : NetworkBehaviour
         networkedScale = newScale;
     }
 
+    public void StartTransition(){
+        transition.targetPosition = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
+        StartCoroutine(transition.StartTransition());
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public async void StartTransitionFromDisplayToVRRPC(){
+        if(!PlatformManager.IsDesktop())
+            return;
+        Debug.LogWarning("STARTTRansition");
+        if(!HasStateAuthority){
+            await GetComponent<NetworkObject>().WaitForStateAuthority();
+        }
+        UpdateWorldState();
+        Transition transition = new Transition(this);
+        StartCoroutine(transition.StartTransitionFromDisplayToVR(Camera.main.transform.position + Camera.main.transform.forward * 2));
+    }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void StampaPosizioneRPC(Vector3 lastOffsetToSubplane, Vector3 phonePosition){
         SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
@@ -203,20 +243,6 @@ public class MovableObject : NetworkBehaviour
         Debug.LogWarning("phone relative: " + phonePosition);
         if(localPhoneSubplane)
             Debug.LogWarning("renderPosRPC: " + (lastOffsetToSubplane + localPhoneSubplane.transform.position));
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void UpdateTransformRPC(Vector3 newPosition, bool isControlledByAR){
-        Debug.Log("Hanno chiamato update transform");
-        transform.position = newPosition;
-        controlledByAR = isControlledByAR;
-        Debug.Log("controllato da AR: " + controlledByAR);
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void SetControlledByARRPC(bool isControlledByAR){
-        controlledByAR = isControlledByAR;
-        Debug.Log("controllato da AR: " + controlledByAR);
     }
 
     public Vector3 CalculateLastOffsetToSubplane(Vector3 nextPosition){
@@ -241,20 +267,23 @@ public class MovableObject : NetworkBehaviour
         return rotation;
     }
 
-    public void OnControlledChanged(){
-        Debug.Log("ControlledByArChanged: " + controlledByAR);
-    }
-
-    public void OnCurrentPositionChanged(){
-        transform.position = currentPosition;
-    }
-
     public void OnSelectionColorChanged(){
         GetComponent<Outline>().OutlineColor = selectionColor;
     }
 
     public void OnSelectedChanged(){
         GetComponent<Outline>().enabled = selected;
+        
+        Debug.LogWarning("offset: " + lastOffsetToSubplane);
+        if(!PlatformManager.IsDesktop()){
+            GameObject localSubplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
+            Debug.LogWarning("pos: " + localSubplane.transform.TransformPoint(lastOffsetToSubplane));
+        }
+        else{
+            
+            Debug.LogWarning("pos: " + Camera.main.transform.TransformPoint(lastOffsetToSubplane));
+        }
+            
     }
 
 }

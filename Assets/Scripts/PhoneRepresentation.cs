@@ -210,7 +210,7 @@ public class PhoneRepresentation : NetworkBehaviour
                     if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                         await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
                     Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                    networkedSelectedObject.UpdateTransform(hit.point, false);
+                    networkedSelectedObject.UpdateTransform(hit.point);
                 }
             }
         }
@@ -234,7 +234,7 @@ public class PhoneRepresentation : NetworkBehaviour
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
             //Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-            networkedSelectedObject.UpdateTransform(hit.point, false);
+            networkedSelectedObject.UpdateTransform(hit.point);
         }
     }
 
@@ -281,13 +281,13 @@ public class PhoneRepresentation : NetworkBehaviour
 
                 NetworkObject spawned = Runner.Spawn(hitObjectPrefab, hit.point, lookRotation);
                 // quando spawnato in locale deve avere settato il subplane attivo locale
-                spawned.GetComponent<MovableObject>().UpdateTransform(hit.point, true);
+                spawned.GetComponent<MovableObject>().UpdateTransform(hit.point);
             }
             else{
                 if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                     await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
                 Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                networkedSelectedObject.UpdateTransform(hit.point, true);
+                networkedSelectedObject.UpdateTransform(hit.point);
             }
         }        
     }
@@ -414,7 +414,7 @@ public class PhoneRepresentation : NetworkBehaviour
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
             Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-            networkedSelectedObject.UpdateTransform(hit.point, true);
+            networkedSelectedObject.UpdateTransform(hit.point);
         }
         Debug.Log($"Drag da {dragGesture.startPosition} a {dragGesture.position}");
         currentDragGesture = dragGesture;
@@ -480,6 +480,7 @@ public class PhoneRepresentation : NetworkBehaviour
             return;
         if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f < gesture.position.y){
             Debug.LogWarning("push in");
+            networkedSelectedObject.StartTransition();
         }
         else if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f > gesture.position.y){
             Debug.LogWarning("pull out");
@@ -507,11 +508,11 @@ public class PhoneRepresentation : NetworkBehaviour
         Debug.LogWarning("Rotation: " + gesture.deltaRotation);
         // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
         // se si trova nel mondo aumentato
-        if(networkedSelectedObject.controlledByAR){
+        if(networkedSelectedObject.worldState == MovableObjectState.inAR){
             networkedSelectedObject.UpdateRotation(-gesture.deltaRotation * twistGestureRotateRate);
         }
         // altrimenti se è nel mondo virtuale
-        else{
+        else if(networkedSelectedObject.worldState == MovableObjectState.inVR){
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
             networkedSelectedObject.UpdateRotation(-gesture.deltaRotation * twistGestureRotateRate);
@@ -549,11 +550,11 @@ public class PhoneRepresentation : NetworkBehaviour
         Debug.LogWarning("GapDelta: " + gesture.gapDelta);
         // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
         // se si trova nel mondo aumentato
-        if(networkedSelectedObject.controlledByAR){
+        if(networkedSelectedObject.worldState == MovableObjectState.inAR){
             networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
         }
         // altrimenti se è nel mondo virtuale
-        else{
+        else if(networkedSelectedObject.worldState == MovableObjectState.inVR){
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
             networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));

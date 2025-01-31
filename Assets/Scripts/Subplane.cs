@@ -82,8 +82,8 @@ public class Subplane : MonoBehaviour
 
         this.center.GetComponent<SubplaneAnchor>().enabled = false;
         //Debug.Log("BCZ Instanzio il subplane");
-        transform.position = center;
-        transform.rotation = rotation;
+        transform.parent.position = center;
+        transform.parent.rotation = rotation;
         //GameObject subplane = Instantiate(subplanePrefab, center, rotation);
         //Debug.Log("BCZ subplane instanziato");
 

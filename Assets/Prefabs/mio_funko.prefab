@@ -291,9 +291,13 @@ MonoBehaviour:
   _isSelectedBy: {fileID: 0}
   _selectionColor: {r: 0, g: 0, b: 0, a: 0}
   _selected: 0
-  _controlledByAR: 0
-  _currentPosition: {x: 0, y: 0, z: 0}
+  _worldState: 0
   meshRenderer: {fileID: 8211794927103748375}
   collider: {fileID: 2358519997444331972}
   _lastOffsetToSubplane: {x: 0, y: 0, z: 0}
   _lastRotationOffsetToSubplane: {x: 0, y: 0, z: 0, w: 0}
+  _networkedScale: {x: 0, y: 0, z: 0}
+  minScale: 0.25
+  maxScale: 2.5
+  particleEffectsPrefab: {fileID: 1329845292236604, guid: 9bba9cf244c53c5439505dfc96fdd11c, type: 3}
+  particleEffects: {fileID: 0}

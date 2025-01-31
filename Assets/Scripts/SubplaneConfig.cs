@@ -164,13 +164,13 @@ public class SubplaneConfig : MonoBehaviour
 
     public void HideAllSubplanes(){
         foreach(GameObject subplane in createdSubplanes){
-            subplane.GetComponent<Subplane>().HideSubplane();
+            subplane.GetComponentInChildren<Subplane>().HideSubplane();
         }
     }
 
     public void ShowAllSubplanes(){
         foreach(GameObject subplane in createdSubplanes){
-            subplane.GetComponent<Subplane>().ShowSubplane();
+            subplane.GetComponentInChildren<Subplane>().ShowSubplane();
         }
     }
 
@@ -290,7 +290,7 @@ public class SubplaneConfig : MonoBehaviour
         //OrderAnchors();
         GameObject subplane = Instantiate(subplanePrefab, anchors[0].transform.position, Quaternion.identity);
         createdSubplanes.Add(subplane);
-        subplane.GetComponent<Subplane>().SetAnchors(anchors);
+        subplane.GetComponentInChildren<Subplane>().SetAnchors(anchors);
     }
 
     private void OrderAnchors(){

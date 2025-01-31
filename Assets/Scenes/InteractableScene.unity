@@ -3465,6 +3465,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SubplaneConfigUI
       objectReference: {fileID: 0}
+    - target: {fileID: 5099945165198690163, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: subplanePrefab
+      value: 
+      objectReference: {fileID: 7914412184229907763, guid: a32a295f553aa694589b2da037724af5, type: 3}
     - target: {fileID: 7063967540136364650, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
       propertyPath: distanceTxt
       value: 
