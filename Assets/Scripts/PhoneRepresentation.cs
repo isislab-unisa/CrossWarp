@@ -472,6 +472,8 @@ public class PhoneRepresentation : NetworkBehaviour
 
     private void TwoFingerEnded(TwoFingerDragGesture gesture){
         Debug.Log("stopped two finger drag");
+        if(!networkedSelectedObject)
+            return;
         isTwoFingerDragging = false;
         currentTwoFingerDragGesture = null;
         gesture.onUpdated -= HandleTwoFingerDrag;
@@ -480,12 +482,19 @@ public class PhoneRepresentation : NetworkBehaviour
             return;
         if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f < gesture.position.y){
             Debug.LogWarning("push in");
-            networkedSelectedObject.StartTransition();
+            networkedSelectedObject.StartPushInTransition();
         }
         else if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f > gesture.position.y){
             Debug.LogWarning("pull out");
+            networkedSelectedObject.StartPullOutTransitionRPC();
         }
     }
+
+    public async Task<bool> RequestStateAuthorityOnSelectedObject(){
+        if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
+            return await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+        return true;
+    } 
 
     //TWIST GESTURE HANDLING
 

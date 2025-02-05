@@ -5,6 +5,11 @@ ModelImporter:
   internalIDToNameTable: []
   externalObjects:
   - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tripo_mat_9940cf0c-078d-4901-a0b6-b6ef480ed6dd
+    second: {fileID: 2100000, guid: 299323ef920efd641bb4eacc56efbfdb, type: 2}
+  - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Diffuse_Bake.jpg

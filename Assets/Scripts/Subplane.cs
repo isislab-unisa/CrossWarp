@@ -101,6 +101,7 @@ public class Subplane : MonoBehaviour
         foreach(GameObject anchor in anchors){
             anchor.SetActive(false);
         }
+        center.SetActive(false);
         Color materialColor = GetComponent<Renderer>().material.color;
         materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0);
         GetComponent<Renderer>().material.color = materialColor;
@@ -112,6 +113,7 @@ public class Subplane : MonoBehaviour
         foreach(GameObject anchor in anchors){
             anchor.SetActive(true);
         }
+        center.SetActive(true);
         Color materialColor = GetComponent<Renderer>().material.color;
         materialColor = new Color(materialColor.r, materialColor.g, materialColor.b, 0.7f);
         GetComponent<Renderer>().material.color = materialColor;
