@@ -91,6 +91,8 @@ public class SubplaneConfig : MonoBehaviour
         StartButton.SetActive(true);
         MoveOnPlaneToggle.SetActive(false);
         dropdown.enabled = true;
+        if(GetSelectedSubplane())
+            Debug.LogWarning("altezza: " + (anchors[0].transform.position.y - anchors[1].transform.position.y));
     }
 
     public void OnConfigModeDpdChanged(){
@@ -104,6 +106,16 @@ public class SubplaneConfig : MonoBehaviour
             configurationMode = ConfigurationMode.InSpace;
         }
         //OnConfigurationModeChanged();
+    }
+
+    public void RecalibrateFrustum(){
+        if(!GetSelectedSubplane())
+            return;
+        float height = anchors[0].transform.position.y - anchors[1].transform.position.y;
+        ARSphereController aRSphereController = FindObjectOfType<ARSphereController>();
+        DesktopSphereController desktopSphereController = aRSphereController.GetReferenceToDesktopObject();
+        if(desktopSphereController)
+            desktopSphereController.RecalibrateNearClipPlaneRpc(height);
     }
 
     public bool IsConfig(){

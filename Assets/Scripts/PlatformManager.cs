@@ -31,6 +31,7 @@ public class PlatformManager : MonoBehaviour
         }
         foreach(GameObject x in DesktopObjects){
             x.SetActive(false);
+            Debug.LogError("disattivo: " + x.name);
         }
     }
 

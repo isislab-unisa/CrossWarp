@@ -14,4 +14,8 @@ public class StartMenu : MonoBehaviour
         SceneManager.LoadScene("MirrorScene");
     }
 
+    public void OnHouseDemoBtnPressed(){
+        SceneManager.LoadScene("HouseScene");
+    }
+
 }

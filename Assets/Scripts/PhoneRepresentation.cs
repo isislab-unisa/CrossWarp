@@ -12,6 +12,7 @@ using UnityEngine.XR.Interaction.Toolkit.AR;
 public class PhoneRepresentation : NetworkBehaviour
 {
     public GameObject hitObjectPrefab;
+    public List<GameObject> hitObjectsPrefabs;
     [Networked]
     public Color interactionColor {get; set;}
     [Networked]
@@ -38,7 +39,7 @@ public class PhoneRepresentation : NetworkBehaviour
     public bool isPinching;
     private float pinchGestureUpdateInterval = 1f;
     private float pinchGestureLastUpdate;
-    public float pinchGestureScaleRate = 0.0001f;
+    public float pinchGestureScaleRate = 0.000001f;
     private PinchGesture currentPinchGesture;
 
     public override void Spawned(){
@@ -204,7 +205,9 @@ public class PhoneRepresentation : NetworkBehaviour
                     directionToPlayer = new Vector3(directionToPlayer.x, 0, directionToPlayer.z);
                     Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
                     
-                    Runner.Spawn(hitObjectPrefab, hit.point, lookRotation);
+                    int x = UnityEngine.Random.Range(0, hitObjectsPrefabs.Count);
+                    GameObject randomPrefab = hitObjectsPrefabs[x];
+                    Runner.Spawn(randomPrefab, hit.point, lookRotation);
                 }
                 else{
                     if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
@@ -278,8 +281,9 @@ public class PhoneRepresentation : NetworkBehaviour
                 Vector3 directionToPlayer = Camera.main.transform.position - hit.point;
                 directionToPlayer = new Vector3(directionToPlayer.x, 0, directionToPlayer.z);
                 Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-
-                NetworkObject spawned = Runner.Spawn(hitObjectPrefab, hit.point, lookRotation);
+                int x = UnityEngine.Random.Range(0, hitObjectsPrefabs.Count);
+                GameObject randomPrefab = hitObjectsPrefabs[x];
+                NetworkObject spawned = Runner.Spawn(randomPrefab, hit.point, lookRotation);
                 // quando spawnato in locale deve avere settato il subplane attivo locale
                 spawned.GetComponent<MovableObject>().UpdateTransform(hit.point);
             }
@@ -448,6 +452,23 @@ public class PhoneRepresentation : NetworkBehaviour
     // fine drag gesture
     private void ARDragEnded(DragGesture dragGesture){
         Debug.Log("stopped drag");
+
+        if(networkedSelectedObject){
+            LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+            if(layerMask == -1){
+                Debug.LogError("Il LayerMask MovabeleObjects non è definito");
+            }
+            // esclusione del layer di movableobjects
+            layerMask = ~layerMask;
+            Ray ray = Camera.main.ScreenPointToRay(dragGesture.position);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity ,layerMask))
+            {
+                if(hit.collider.GetComponent<Subplane>()){
+                    networkedSelectedObject.StartPushInTransitionOnScreen();
+                }
+            }
+        }
+
         isDragging = false;
         dragGesture.onUpdated -= HandleARDrag;
         dragGesture.onFinished -= ARDragEnded;
@@ -555,17 +576,19 @@ public class PhoneRepresentation : NetworkBehaviour
             
         if(isTwisting)
             return;
-        Debug.LogWarning("Gap: " + gesture.gap);
-        Debug.LogWarning("GapDelta: " + gesture.gapDelta);
         // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
         // se si trova nel mondo aumentato
         if(networkedSelectedObject.worldState == MovableObjectState.inAR){
+            Debug.LogWarning("gapDelta: " + gesture.gapDelta);
+            Debug.LogWarning("resize: " + GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
             networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
         }
         // altrimenti se è nel mondo virtuale
         else if(networkedSelectedObject.worldState == MovableObjectState.inVR){
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+            Debug.LogWarning("gapDelta: " + gesture.gapDelta);
+            Debug.LogWarning("resize: " + GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
             networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
         }
     }
