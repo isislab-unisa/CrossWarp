@@ -33,7 +33,7 @@ public class Transition
         while(startPos != targetPosition && timer < transitionDuration) 
         {
             float progress = timer / transitionDuration;
-            applyTo.UpdateTransform(Vector3.Lerp(startPos, targetPosition, progress));
+            applyTo.UpdatePosition(Vector3.Lerp(startPos, targetPosition, progress));
             
             timer += Time.deltaTime;
             yield return null;
@@ -43,33 +43,6 @@ public class Transition
             applyTo.transitionState = TransitionState.VRtoAR;
         else if(applyTo.worldState == MovableObjectState.TransitioningToVR)
             applyTo.transitionState = TransitionState.ARtoVR;
-
-        /*timer = 0;
-        while(timer < particleDuration) 
-        {*/
-            
-        //}
-
-        //yield return StartARToVR();
-
-        
-        //yield return StartMovingFromDisplay();
-
-        //applyTo.transitionState = TransitionState.Ended;
-
-        //applyTo.StartTransitionFromDisplayToVRRPC();
-
-        /*timer = 0;
-        startPos = applyTo.transform.position;
-        while(timer < transitionDuration) 
-        {
-            float progress = timer / transitionDuration;
-            applyTo.UpdateTransform(Vector3.Lerp(startPos, targetPosition.transform.forward * 2, progress));
-            applyTo.worldState = MovableObjectState.inVR;
-            
-            timer += Time.deltaTime;
-            yield return null;
-        }*/
     }
 
     public IEnumerator StartARToVR(bool inDesktop, Vector3 target){
@@ -89,7 +62,7 @@ public class Transition
         
         yield return new WaitForSeconds(particleSystem.main.duration);
         if(inDesktop)
-            applyTo.UpdateTransform(target);
+            applyTo.UpdatePosition(target);
         
         applyTo.transitionState = TransitionState.MovingFromDisplay;
 
@@ -111,7 +84,7 @@ public class Transition
         
         yield return new WaitForSeconds(particleSystem.main.duration);
         if(!inDesktop && applyTo.HasStateAuthority){
-            applyTo.UpdateTransform(target);
+            applyTo.UpdatePosition(target);
             Debug.LogWarning("update position: " + target);
         }
         
@@ -138,7 +111,7 @@ public class Transition
         applyTo.transform.position = targetPosition;
         applyTo.Assemble();
         Debug.LogWarning("UpdateTRansform after assemble");
-        applyTo.UpdateTransform(applyTo.transform.position);
+        applyTo.UpdatePosition(applyTo.transform.position);
 
         /*while(timer < transitionDuration) 
         {
@@ -160,7 +133,7 @@ public class Transition
         while(startPos != targetPosition && timer < transitionDuration) 
         {
             float progress = timer / transitionDuration;
-            applyTo.UpdateTransform(Vector3.Lerp(startPos, targetPosition, progress));
+            applyTo.UpdatePosition(Vector3.Lerp(startPos, targetPosition, progress));
             
             timer += Time.deltaTime;
             yield return null;
@@ -170,20 +143,6 @@ public class Transition
             applyTo.transitionState = TransitionState.VRtoAR;
         else if(applyTo.worldState == MovableObjectState.TransitioningToVR)
             applyTo.transitionState = TransitionState.ARtoVR;
-        
-        /*timer = 0;
-        transitionDuration = 0.5f;
-        float velocity = 0.1f;
-        while(timer < transitionDuration && applyTo.transitionState != TransitionState.MovingFromDisplay && applyTo.HasStateAuthority){
-            if(applyTo.worldState == MovableObjectState.TransitioningToAR){
-                applyTo.UpdateTransform(Vector3.Lerp(applyTo.transform.position, applyTo.transform.position + targetTransform.forward * velocity, 0.5f));
-            }
-            else if(applyTo.worldState == MovableObjectState.TransitioningToVR){
-                applyTo.UpdateTransform(Vector3.Lerp(applyTo.transform.position, applyTo.transform.position - targetTransform.forward * velocity, 0.5f));
-            }
-            timer += Time.deltaTime;
-            yield return null;
-        }*/
     }
 
     public IEnumerator StartARToVRSeamless(bool inDesktop, Vector3 target){
@@ -198,23 +157,6 @@ public class Transition
         }
         applyTo.transitionState = TransitionState.MovingFromDisplay;
         yield return null;
-        // Vector3 startPos = applyTo.transform.position;
-        // float timer = 0;
-        // while(!PlatformManager.IsDesktop() && applyTo.HasStateAuthority){
-        //     float progress = timer / transitionDuration;
-        //     if(progress > 1)
-        //         progress = 1;
-        //     applyTo.UpdateTransform(Vector3.Lerp(startPos, target, progress));
-            
-        //     timer += Time.deltaTime;
-        //     yield return null;
-        // }
-        
-        // while(PlatformManager.IsDesktop() && !applyTo.HasStateAuthority)
-        //     yield return null;
-
-        // if(PlatformManager.IsDesktop())
-        //     applyTo.transitionState = TransitionState.MovingFromDisplay;
 
     }
 
@@ -232,33 +174,9 @@ public class Transition
         applyTo.transitionState = TransitionState.MovingFromDisplay;
         yield return null;
 
-        // Vector3 startPos = applyTo.transform.position;
-        // float timer = 0;
-        // while(PlatformManager.IsDesktop() && applyTo.HasStateAuthority){
-        //     float progress = timer / transitionDuration;
-        //     if(progress > 1)
-        //         progress = 1;
-        //     applyTo.UpdateTransform(Vector3.Lerp(startPos, target, progress));
-            
-        //     timer += Time.deltaTime;
-        //     yield return null;
-        // }
-        
-        // while(!PlatformManager.IsDesktop() && !applyTo.HasStateAuthority)
-        //     yield return null;
-            
-        // if(!PlatformManager.IsDesktop())
-        //     applyTo.transitionState = TransitionState.MovingFromDisplay;
-
     }
 
     public IEnumerator StartMovingFromDisplaySeamless(Vector3 targetPosition){
-        //applyTo.transitionState = TransitionState.MovingFromDisplay;
-
-        /*applyTo.transform.position = targetPosition.transform.position;
-        applyTo.Assemble();
-        Debug.LogWarning("UpdateTRansform after assemble");
-        applyTo.UpdateTransform(applyTo.transform.position);*/
 
         Vector3 startPos = applyTo.transform.position;
         float timer = 0;
@@ -268,7 +186,7 @@ public class Transition
         {
             float progress = timer / transitionDuration;
             if(applyTo.HasStateAuthority)
-                applyTo.UpdateTransform(Vector3.Lerp(startPos, targetPosition, progress));
+                applyTo.UpdatePosition(Vector3.Lerp(startPos, targetPosition, progress));
             
             timer += Time.deltaTime;
             yield return null;

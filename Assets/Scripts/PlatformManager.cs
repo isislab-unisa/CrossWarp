@@ -10,7 +10,7 @@ public class PlatformManager : MonoBehaviour
     private List<GameObject> DesktopObjects;
 
     public static bool IsDesktop(){
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(SystemInfo.deviceType == DeviceType.Desktop)
             return true;
         return false;
     }

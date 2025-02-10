@@ -215,9 +215,8 @@ public class MovableObject : NetworkBehaviour
         selected = false;
     }
 
-    public void UpdateTransform(Vector3 newPosition){
+    public void UpdatePosition(Vector3 newPosition){
         Debug.Log("Hanno chiamato update transform: " + newPosition);
-        //transform.position = newPosition;
 
         SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
             if(subplaneConfig)
@@ -245,7 +244,6 @@ public class MovableObject : NetworkBehaviour
             else
                 activePhoneSubplane = null;
         lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-        //lastOffsetToSubplane = CalculateLastOffsetToSubplane();
     }
 
     public void UpdateRotation(float rotationAngle, Vector3 rotationAxis){
@@ -258,7 +256,6 @@ public class MovableObject : NetworkBehaviour
             else
                 activePhoneSubplane = null;
         lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
-        //lastOffsetToSubplane = CalculateLastOffsetToSubplane();
 
     }
 
@@ -471,41 +468,10 @@ public class MovableObject : NetworkBehaviour
         }
         else if(transitionState == TransitionState.ARtoVR){
             GetComponent<Outline>().enabled = false;
-
-            // if(PlatformManager.IsDesktop()){
-            //     Transform NCPCenter = Camera.main.transform.GetChild(0);
-            //     // if(!GetComponent<NetworkObject>().HasStateAuthority)
-            //     //         await GetComponent<NetworkObject>().WaitForStateAuthority();
-            //     StartCoroutine(transition.StartARToVRSeamless(true, NCPCenter.position - NCPCenter.forward * 0.25f));
-            // }
-            // if(!PlatformManager.IsDesktop()){
-            //     Transform subplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-            //     StartCoroutine(transition.StartARToVRSeamless(false, subplane.position + subplane.forward * 0.25f));
-            // }
-            
-            //StartCoroutine(transition.StartARToVRSeamless(false, Vector3.zero));
-            
-            /*particleEffects.GetComponent<ParticleSystem>().Play();
-            if(PlatformManager.IsDesktop()){
-                StartDissolve();
-            }
-            else{
-                StartAssemble();
-            }*/
             transitionState = TransitionState.MovingFromDisplay;
         }
         else if(transitionState == TransitionState.VRtoAR){
             GetComponent<Outline>().enabled = false;
-            // if(PlatformManager.IsDesktop()){
-            //     Transform NCPCenter = Camera.main.transform.GetChild(0);
-            //     StartCoroutine(transition.StartVRToARSeamless(true, NCPCenter.position + NCPCenter.forward * 0.25f));
-            // }
-            // else{
-            //     //await isSelectedBy.RequestStateAuthorityOnSelectedObject();
-            //     Debug.LogWarning("hasSA: " + HasStateAuthority);
-            //     Transform subplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-            //     StartCoroutine(transition.StartVRToARSeamless(false, subplane.position - subplane.forward * 0.25f ));
-            // }
             
             transitionState = TransitionState.MovingFromDisplay;
         }

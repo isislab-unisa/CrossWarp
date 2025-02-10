@@ -213,7 +213,7 @@ public class PhoneRepresentation : NetworkBehaviour
                     if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                         await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
                     Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                    networkedSelectedObject.UpdateTransform(hit.point);
+                    networkedSelectedObject.UpdatePosition(hit.point);
                 }
             }
         }
@@ -237,7 +237,7 @@ public class PhoneRepresentation : NetworkBehaviour
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
             //Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-            networkedSelectedObject.UpdateTransform(hit.point);
+            networkedSelectedObject.UpdatePosition(hit.point);
         }
     }
 
@@ -285,13 +285,13 @@ public class PhoneRepresentation : NetworkBehaviour
                 GameObject randomPrefab = hitObjectsPrefabs[x];
                 NetworkObject spawned = Runner.Spawn(randomPrefab, hit.point, lookRotation);
                 // quando spawnato in locale deve avere settato il subplane attivo locale
-                spawned.GetComponent<MovableObject>().UpdateTransform(hit.point);
+                spawned.GetComponent<MovableObject>().UpdatePosition(hit.point);
             }
             else{
                 if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                     await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
                 Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-                networkedSelectedObject.UpdateTransform(hit.point);
+                networkedSelectedObject.UpdatePosition(hit.point);
             }
         }        
     }
@@ -418,7 +418,7 @@ public class PhoneRepresentation : NetworkBehaviour
             if(!networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
             Debug.Log("" + Runner.LocalPlayer + " hasSA: " + networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority);
-            networkedSelectedObject.UpdateTransform(hit.point);
+            networkedSelectedObject.UpdatePosition(hit.point);
         }
         Debug.Log($"Drag da {dragGesture.startPosition} a {dragGesture.position}");
         currentDragGesture = dragGesture;
