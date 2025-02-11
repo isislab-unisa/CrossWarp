@@ -158,7 +158,6 @@ MonoBehaviour:
   hitObjectPrefab: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
   hitObjectsPrefabs:
   - {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
-  - {fileID: 2981997604817611951, guid: 4166fc84bc033a34396a155083d1b2b6, type: 3}
   _interactionColor: {r: 0, g: 0, b: 0, a: 0}
   _networkedSelectedObject: {fileID: 0}
   isDragging: 0

@@ -8,6 +8,7 @@ public class Subplane : MonoBehaviour
     public GameObject anchorPrefab;
     private List<GameObject> anchors = new List<GameObject>();
     private GameObject center;
+    private bool isOrdered = false;
 
     // forse non serve più
     private bool isVisible = true;
@@ -47,6 +48,10 @@ public class Subplane : MonoBehaviour
     }
 
     private void RenderSubplane(){
+        if(!isOrdered){
+            OrderAnchors();
+            isOrdered = true;
+        }
         Vector3 point1 = anchors[0].transform.position;
         Vector3 point2 = anchors[1].transform.position;
         Vector3 point3 = anchors[2].transform.position;
@@ -70,7 +75,7 @@ public class Subplane : MonoBehaviour
         Vector3 forward = normal;
 
         // Crea una rotazione basata su forward e up
-        Quaternion rotation = Quaternion.LookRotation(forward, up);
+        Quaternion rotation = Quaternion.LookRotation(forward, Vector3.up);
 
         // calcolo il centro di dove verrà spostato il subplane
         Vector3 center = point2 + (vHeight / 2) + (vWidth / 2);
@@ -81,6 +86,7 @@ public class Subplane : MonoBehaviour
             this.center = Instantiate(anchorPrefab, center, rotation);
 
         this.center.GetComponent<SubplaneAnchor>().enabled = false;
+        
         //Debug.Log("BCZ Instanzio il subplane");
         transform.parent.position = center;
         transform.parent.rotation = rotation;
@@ -93,6 +99,35 @@ public class Subplane : MonoBehaviour
         //Debug.Log("SubplaneWidth: " + vWidth.magnitude);
 
         //Debug.Log("BCZ subplane localscale: " + transform.localScale);
+    }
+
+    private void OrderAnchors(){
+        Vector3 centerPos = Vector3.zero;
+        foreach (var anchor in anchors){
+            centerPos += anchor.transform.position;
+        }
+        centerPos /= anchors.Count;
+        GameObject center = Instantiate(anchorPrefab, centerPos, Quaternion.identity);
+        center.transform.localScale = center.transform.localScale * 1.5f;
+        center.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up);
+        GameObject temp;
+        for(int i = 1; i<anchors.Count; i++){
+            Vector3 firstPosition = center.transform.InverseTransformPoint(anchors[0].transform.position);
+            Vector3 otherPosition = center.transform.InverseTransformPoint(anchors[i].transform.position);
+            if(firstPosition.y < otherPosition.y){
+                temp = anchors[0];
+                anchors[0] = anchors[i];
+                anchors[i] = temp;
+            }
+        }
+        Vector3 secondPosition = center.transform.InverseTransformPoint(anchors[1].transform.position);
+        Vector3 thirdPosition = center.transform.InverseTransformPoint(anchors[2].transform.position);
+        if(secondPosition.x > thirdPosition.x){
+            temp = anchors[1];
+            anchors[1] = anchors[2];
+            anchors[2] = temp;
+        }
+        Destroy(center);
     }
 
     public void HideSubplane(){

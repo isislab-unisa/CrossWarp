@@ -57,7 +57,7 @@ public class ImageTrackingManager : MonoBehaviour
         {
             displayPosition = newImage.transform;
             Debug.Log("BCZ immagine: " + newImage.transform.position);
-            if(subplaneConfig && !trackedAnchors.ContainsKey(newImage.trackableId)){
+            if(subplaneConfig && !trackedAnchors.ContainsKey(newImage.trackableId) && displayPosition.position != Vector3.zero){
                 CreateSubplaneAnchorByImage(newImage);
             }
         }
@@ -70,24 +70,19 @@ public class ImageTrackingManager : MonoBehaviour
             if(trackedAnchors.ContainsKey(trackableId) && trackedAnchors[trackableId]){
                 //Debug.Log("updatedImage: " + updatedImage.referenceImage.name);
                 if(updatedImage.referenceImage.name.Equals("upleft")){
-                    offset = /*new Vector3(-offset.x, offset.y) **/ -updatedImage.transform.right * offset.x + updatedImage.transform.forward * offset.y;
+                    offset = -updatedImage.transform.right * offset.x + updatedImage.transform.forward * offset.y;
                 }
                 else if(updatedImage.referenceImage.name.Equals("downleft")){
-                    offset = /*new Vector3(-offset.x, -offset.y) */ -updatedImage.transform.right * offset.x - updatedImage.transform.forward * offset.y;
+                    offset = -updatedImage.transform.right * offset.x - updatedImage.transform.forward * offset.y;
                 }
                 else if(updatedImage.referenceImage.name.Equals("downright")){
-                    offset = /*new Vector3(offset.x, -offset.y)*/ updatedImage.transform.right * offset.x - updatedImage.transform.forward * offset.y;
+                    offset = updatedImage.transform.right * offset.x - updatedImage.transform.forward * offset.y;
                 }
-                //Quaternion rotation = GetRotationRelativeToTransform(updatedImage.transform);
-                //Debug.LogWarning("rotation: " + rotation);
-                //offset = rotation * offset;
-                //Debug.LogWarning("" + updatedImage.referenceImage.name + " off: " + offset);
                 if(trackedAnchors[trackableId].transform.position != updatedImage.transform.position + offset){
                     trackedAnchors[trackableId].transform.position = updatedImage.transform.position + offset;
                 }
-                //trackedAnchors[trackableId].transform.position = updatedImage.transform.position + updatedImage.transform.right;
             }
-            else{
+            else if (updatedImage.transform.position != Vector3.zero){
                 CreateSubplaneAnchorByImage(updatedImage);
             }
         }
@@ -106,7 +101,9 @@ public class ImageTrackingManager : MonoBehaviour
     }
 
     public void CreateSubplaneAnchorByImage(ARTrackedImage newImage){
-        trackedImageObject = subplaneConfig.CreateSubplaneAnchor(newImage.transform.position);
+        Debug.LogError("image pos: " + newImage.transform.position);
+        Debug.LogError("image rot: " + newImage.transform.rotation);
+        trackedImageObject = subplaneConfig.CreateSubplaneAnchor(newImage.transform.position, newImage.transform.rotation);
         //trackedImageObject.transform.rotation *= GetRotationRelativeToTransform(trackedImageObject.transform, newImage.transform);
         trackedAnchors.Add(newImage.trackableId, trackedImageObject);
     }

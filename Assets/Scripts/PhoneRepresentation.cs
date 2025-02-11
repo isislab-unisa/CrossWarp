@@ -68,6 +68,12 @@ public class PhoneRepresentation : NetworkBehaviour
     }
 
     public void Update(){
+        if(!subplaneConfig)
+            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
+        // se non è ancora stato creato un subplane non vogliamo gestire i touch del giocatore
+        if(!subplaneConfig || !subplaneConfig.GetSelectedSubplane())
+            return;
+        
         if(isDragging && currentDragGesture != null){
             if(dragGestureLastUpdate + dragGestureUpdateInterval <= Time.deltaTime)
             {
@@ -340,6 +346,11 @@ public class PhoneRepresentation : NetworkBehaviour
 
     public void TapGestureStart(TapGesture gesture){
         Debug.LogWarning("Chiamata HandleARTap");
+        if(!subplaneConfig)
+            subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
+        // se non è ancora stato creato un subplane non vogliamo gestire i touch del giocatore
+        if(!subplaneConfig || !subplaneConfig.GetSelectedSubplane())
+            return;
         
         if(isDragging || isTwoFingerDragging || isTwisting || isPinching)
             return;

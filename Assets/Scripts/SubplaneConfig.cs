@@ -282,13 +282,14 @@ public class SubplaneConfig : MonoBehaviour
             {
                 Vector3 touchPointWorldPosition = Camera.main.ScreenToWorldPoint(touch.position);
                 Vector3 creationPoint = new Vector3(touchPointWorldPosition.x, touchPointWorldPosition.y, touchPointWorldPosition.z) + Camera.main.transform.forward*0.2f;  
-                CreateSubplaneAnchor(creationPoint);
+                Quaternion rotation = Quaternion.FromToRotation(Vector3.up, -Camera.main.transform.forward);
+                CreateSubplaneAnchor(creationPoint, rotation);
             }
         }
     }
 
-    public GameObject CreateSubplaneAnchor(Vector3 position){
-        GameObject anchor = Instantiate(ancorPrefab, position, Quaternion.identity);
+    public GameObject CreateSubplaneAnchor(Vector3 position, Quaternion rotation){
+        GameObject anchor = Instantiate(ancorPrefab, position, rotation);
         var placementAnchor = new GameObject("PlacementAnchor").transform;
         placementAnchor.position = position;
         placementAnchor.rotation = Quaternion.identity;
@@ -299,34 +300,9 @@ public class SubplaneConfig : MonoBehaviour
     }
 
     private void CreateSubplane(){
-        //OrderAnchors();
         GameObject subplane = Instantiate(subplanePrefab, anchors[0].transform.position, Quaternion.identity);
         createdSubplanes.Add(subplane);
         subplane.GetComponentInChildren<Subplane>().SetAnchors(anchors);
-    }
-
-    private void OrderAnchors(){
-        GameObject temp;
-        for(int i = 1; i<anchors.Count; i++){
-            if(anchors[0].transform.position.y < anchors[i].transform.position.y){
-                temp = anchors[0];
-                anchors[0] = anchors[i];
-                anchors[i] = temp;
-            }
-            /*else{
-                if(anchors[0].transform.position.x > anchors[i].transform.position.x){
-                    temp = anchors[0];
-                    anchors[0] = anchors[i];
-                    anchors[i] = temp;
-                }
-            }*/
-        }
-        // le anchor quando create con l'image tracking all'inizio vengono sempre instanziate sull'xr origin, questo porta problemi alla creazione dei subplane
-        if(anchors[1].transform.position.x > anchors[2].transform.position.x){
-            temp = anchors[1];
-            anchors[1] = anchors[2];
-            anchors[2] = temp;
-        }
     }
 
 }
