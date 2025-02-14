@@ -16,8 +16,6 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
             Debug.Log($"PlatformManager.IsDesktop(): {PlatformManager.IsDesktop()}");
 
             if(PlatformManager.IsDesktop()){
-                /*Runner.Spawn(ImagePrefab,  new Vector3(0, 1, 0), Quaternion.identity);
-                return;*/
                 spawned = Runner.Spawn(DesktopPlayerPrefab, new Vector3(0, 1, 0), Quaternion.identity);
                 Runner.SetPlayerObject(Runner.LocalPlayer, spawned);
                 Debug.Log("BCZ disabilito AR controller");
@@ -25,9 +23,6 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
                 return;
             }
             spawned = Runner.Spawn(ARPlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            /*spawned.gameObject.GetComponent<DesktopSphereController>().enabled = false;
-            spawned.gameObject.GetComponent<ARSphereController>().enabled = true;
-            spawned.gameObject.GetComponent<DisplayConnector>().enabled = true;*/
             Debug.Log("Spawnato : " + spawned.name);
             Runner.SetPlayerObject(Runner.LocalPlayer, spawned);
         }

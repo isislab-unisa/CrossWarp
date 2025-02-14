@@ -116,10 +116,9 @@ GameObject:
   - component: {fileID: 4035833362787714534}
   - component: {fileID: 8234705135472490757}
   - component: {fileID: 3629465471445127827}
-  - component: {fileID: 4082958408858336325}
-  - component: {fileID: 3721466976020381887}
   - component: {fileID: -884138769956563699}
   - component: {fileID: 8125548564650148283}
+  - component: {fileID: 2765819374128325235}
   m_Layer: 0
   m_Name: PhonePlayer
   m_TagString: Untagged
@@ -160,12 +159,6 @@ MonoBehaviour:
   - {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
   _interactionColor: {r: 0, g: 0, b: 0, a: 0}
   _networkedSelectedObject: {fileID: 0}
-  isDragging: 0
-  isTwoFingerDragging: 0
-  isTwisting: 0
-  twistGestureRotateRate: 2.5
-  isPinching: 0
-  pinchGestureScaleRate: 0.1
 --- !u!114 &3629465471445127827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,34 +177,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 8234705135472490757}
-  - {fileID: 4082958408858336325}
-  - {fileID: 3721466976020381887}
   - {fileID: -884138769956563699}
---- !u!114 &4082958408858336325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8470635758975143755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0790c95a1baf344cb955357878bb528, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3721466976020381887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8470635758975143755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c59590b9e1102f648827c7f13a0c7249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aRSphereController: {fileID: 0}
+  - {fileID: 2765819374128325235}
 --- !u!114 &-884138769956563699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,3 +216,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.07, y: 0.14, z: 0.005}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2765819374128325235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470635758975143755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259718016806092469841c8b03b14bbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDragging: 0
+  isTwoFingerDragging: 0
+  isTwisting: 0
+  twistGestureRotateRate: 2.5
+  isPinching: 0
+  pinchGestureScaleRate: 0.005

@@ -47,7 +47,7 @@ public class DesktopSphereController : NetworkBehaviour
         Debug.Log("Players Configuring: " + playersConfiguring);
         if(playerIsConfiguring)
             playersConfiguring++;
-        else
+        else if(playersConfiguring > 0)
             playersConfiguring--;
         if(playersConfiguring > 0)
             ImageTrackingCanvasInstance.SetActive(true);
