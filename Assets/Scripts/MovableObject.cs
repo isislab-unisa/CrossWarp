@@ -226,13 +226,6 @@ public class MovableObject : NetworkBehaviour
             selectionColor = playerSelecting.interactionColor;
             selected = true;
 
-            ContainerObject containerObject = GetComponentInChildren<ContainerObject>(); 
-            if(containerObject){
-                Debug.LogError("Container object presente");
-                //containerObject.ReleaseSelectionOnSelectedChildren(playerSelecting);
-                containerObject.TrySelectChildren(playerSelecting);
-            }
-
             return true;
         }
         else if(isSelectedBy != playerSelecting){
