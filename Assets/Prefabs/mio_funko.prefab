@@ -14620,6 +14620,7 @@ GameObject:
   - component: {fileID: 2358519997444331972}
   - component: {fileID: 4925285865918448438}
   - component: {fileID: -3474974761922544632}
+  - component: {fileID: 5100716924258259747}
   m_Layer: 6
   m_Name: mio_funko
   m_TagString: MovableObject
@@ -14742,3 +14743,30 @@ MonoBehaviour:
   particleEffectsPrefab: {fileID: 3813116932242698345}
   particleEffects: {fileID: 0}
   _transitionState: 0
+--- !u!54 &5100716924258259747
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8941350250810633950}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

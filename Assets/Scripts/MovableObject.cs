@@ -68,7 +68,11 @@ public class MovableObject : NetworkBehaviour
         //particleEffects.GetComponent<ParticleSystem>().Play();
         StartAssemble();
         float seedForNoise = Random.Range(1, 100);
-        meshRenderer.material.SetFloat("_SeedForRandomNoise", seedForNoise);
+        //meshRenderer.material.SetFloat("_SeedForRandomNoise", seedForNoise);
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach(Renderer renderer in renderers){
+            renderer.material.SetFloat("_SeedForRandomNoise", seedForNoise);
+        }
         isSpawned = true;
     }
 
@@ -86,11 +90,19 @@ public class MovableObject : NetworkBehaviour
         float time = 0;
         float duration = 1f;
         float progress = 0;
-        meshRenderer.material.SetFloat("_DissolveAmount", 1);
+        //meshRenderer.material.SetFloat("_DissolveAmount", 1);
+        
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach(Renderer renderer in renderers){
+            renderer.material.SetFloat("_DissolveAmount", 1);
+        }
         SetShowing(true);
         while(time < duration){
             progress = 1 - time/duration;
-            meshRenderer.material.SetFloat("_DissolveAmount", progress);
+            //meshRenderer.material.SetFloat("_DissolveAmount", progress);
+            foreach(Renderer renderer in renderers){
+                renderer.material.SetFloat("_DissolveAmount", progress);
+            }
 
             time += Time.deltaTime;
             yield return null;
@@ -101,10 +113,17 @@ public class MovableObject : NetworkBehaviour
         float time = 0;
         float duration = 1f;
         float progress = 0;
-        meshRenderer.material.SetFloat("_DissolveAmount", 0);
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach(Renderer renderer in renderers){
+            renderer.material.SetFloat("_DissolveAmount", 0);
+        }
+        //meshRenderer.material.SetFloat("_DissolveAmount", 0);
         while(time < duration){
             progress = time/duration;
-            meshRenderer.material.SetFloat("_DissolveAmount", progress);
+            //meshRenderer.material.SetFloat("_DissolveAmount", progress);
+            foreach(Renderer renderer in renderers){
+                renderer.material.SetFloat("_DissolveAmount", progress);
+            }
 
             time += Time.deltaTime;
             yield return null;
@@ -115,6 +134,7 @@ public class MovableObject : NetworkBehaviour
     {
         if(!isSpawned)
             return;
+
         if(PlatformManager.IsDesktop() && worldState == MovableObjectState.inVR){
             SetShowing(true);
         }
@@ -152,10 +172,20 @@ public class MovableObject : NetworkBehaviour
     }
 
     public void SetShowing(bool showing){
-        meshRenderer.enabled = showing;
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach(Renderer renderer in renderers){
+            renderer.enabled = showing;
+            if(showing && (worldState == MovableObjectState.inAR || worldState == MovableObjectState.inVR))
+                renderer.material.SetFloat("_DissolveAmount", 0);
+        }
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach(Collider collider in colliders){
+            collider.enabled = showing;
+        }
+        /*meshRenderer.enabled = showing;
         collider.enabled = showing;
         if(showing && (worldState == MovableObjectState.inAR || worldState == MovableObjectState.inVR))
-            meshRenderer.material.SetFloat("_DissolveAmount", 0);
+            meshRenderer.material.SetFloat("_DissolveAmount", 0);*/
     }
 
     private void UpdateWorldState(){
@@ -195,6 +225,14 @@ public class MovableObject : NetworkBehaviour
             //GetComponent<Outline>().enabled = true;
             selectionColor = playerSelecting.interactionColor;
             selected = true;
+
+            ContainerObject containerObject = GetComponentInChildren<ContainerObject>(); 
+            if(containerObject){
+                Debug.LogError("Container object presente");
+                //containerObject.ReleaseSelectionOnSelectedChildren(playerSelecting);
+                containerObject.TrySelectChildren(playerSelecting);
+            }
+
             return true;
         }
         else if(isSelectedBy != playerSelecting){
@@ -476,12 +514,14 @@ public class MovableObject : NetworkBehaviour
             transitionState = TransitionState.MovingFromDisplay;
         }
         else if(transitionState == TransitionState.MovingFromDisplay){
+            // effetti particellari
             particleEffects.transform.parent = transform;
             particleEffects.transform.localPosition = particleEffectsPrefab.transform.localPosition;
             particleEffects.GetComponent<ParticleSystem>().Play();
             particleEffects.transform.parent = null;
             Vector3 targetPosition = Vector3.zero;
 
+            // se la transizione è da AR a VR allora il desktop deve richiedere la state authority per occuparsi degli spostamenti dell'oggetto
             if(worldState == MovableObjectState.TransitioningToVR){
                 if(PlatformManager.IsDesktop()){
                     StartAssemble();
@@ -495,6 +535,7 @@ public class MovableObject : NetworkBehaviour
                     targetPosition = target.position + target.forward * 0.25f;
                 }
             }
+            // se la transizione è da VR ad AR allora il client che ha selezionato l'oggetto deve richiedere la state authority per occuparsi degli spostamenti dell'oggetto
             else if(worldState == MovableObjectState.TransitioningToAR){
                 if(PlatformManager.IsDesktop()){
                     StartDissolve();
@@ -512,31 +553,7 @@ public class MovableObject : NetworkBehaviour
                 }
             }
 
-            // if(HasStateAuthority && PlatformManager.IsDesktop()){
-            //     StartDissolve();
-            //     Transform target = Camera.main.transform.GetChild(0);
-            //     targetPosition = target.position - target.forward * 0.25f;
-            //     Debug.LogError("target: " + targetPosition);
-            // }
-            // else if(!HasStateAuthority && !PlatformManager.IsDesktop()){
-            //     StartAssemble();
-            //     await isSelectedBy.RequestStateAuthorityOnSelectedObject();
-            //     Transform target = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-            //     targetPosition = target.position - target.forward * 0.25f;
-            //     Debug.LogError("target: " + targetPosition);
-            //     Debug.LogError("HasSAX: " + HasStateAuthority);
-            // }
-            // else if(HasStateAuthority && !PlatformManager.IsDesktop()){
-            //     StartDissolve();
-            //     Transform target = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-            //     targetPosition = target.position + target.forward * 0.25f;
-            // }
-            // else if(!HasStateAuthority && PlatformManager.IsDesktop()){
-            //     StartAssemble();
-            //     await GetComponent<NetworkObject>().WaitForStateAuthority();
-            //     Transform target = Camera.main.transform.GetChild(0);
-            //     targetPosition = target.position + target.forward * 0.25f;
-            // }
+            // che sia desktop o meno tutti i client chiamano la fase finale della transizione
             if(PlatformManager.IsDesktop()){
                 //Transform target = Camera.main.transform.GetChild(0);
                 StartCoroutine(transition.StartMovingFromDisplaySeamless(targetPosition));

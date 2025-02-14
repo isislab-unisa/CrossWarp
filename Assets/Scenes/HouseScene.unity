@@ -968,14 +968,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2455920542769408115, guid: a9d3c6526c1061f429cb6aedccfc160d, type: 3}
-      propertyPath: maxScale
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 2455920542769408115, guid: a9d3c6526c1061f429cb6aedccfc160d, type: 3}
-      propertyPath: minScale
-      value: 0.15
-      objectReference: {fileID: 0}
     - target: {fileID: 4461590733969933333, guid: a9d3c6526c1061f429cb6aedccfc160d, type: 3}
       propertyPath: m_Name
       value: TableRectangleShort
