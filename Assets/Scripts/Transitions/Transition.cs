@@ -17,12 +17,14 @@ public enum TransitionState {
 public class Transition
 {
     public MovableObject applyTo;
+    public TransitionManager transitionManager;
     public float transitionDuration = 2.5f;
     public float particleDuration = 2f;
     public Vector3 targetPosition;
 
-    public Transition(MovableObject applyTo){
+    public Transition(MovableObject applyTo, TransitionManager transitionManager){
         this.applyTo = applyTo;
+        this.transitionManager = transitionManager;
     }
 
     public IEnumerator StartMovingToDisplay(){
@@ -40,9 +42,9 @@ public class Transition
         }
 
         if(applyTo.worldState == MovableObjectState.TransitioningToAR)
-            applyTo.transitionState = TransitionState.VRtoAR;
+            transitionManager.transitionState = TransitionState.VRtoAR;
         else if(applyTo.worldState == MovableObjectState.TransitioningToVR)
-            applyTo.transitionState = TransitionState.ARtoVR;
+            transitionManager.transitionState = TransitionState.ARtoVR;
     }
 
     public IEnumerator StartARToVR(bool inDesktop, Vector3 target){
@@ -64,7 +66,7 @@ public class Transition
         if(inDesktop)
             applyTo.UpdatePosition(target);
         
-        applyTo.transitionState = TransitionState.MovingFromDisplay;
+        transitionManager.transitionState = TransitionState.MovingFromDisplay;
 
     }
 
@@ -88,7 +90,7 @@ public class Transition
             Debug.LogWarning("update position: " + target);
         }
         
-        applyTo.transitionState = TransitionState.MovingFromDisplay;
+        transitionManager.transitionState = TransitionState.MovingFromDisplay;
 
     }
 
@@ -101,7 +103,7 @@ public class Transition
         applyTo.UpdateTransform(applyTo.transform.position);*/
         yield return null;
 
-        applyTo.transitionState = TransitionState.Ended;
+        transitionManager.transitionState = TransitionState.Ended;
 
     }
 
@@ -125,7 +127,7 @@ public class Transition
     }
 
     public IEnumerator StartMovingToDisplaySeamless(Transform targetTransform, Vector3 targetPosition){
-        applyTo.transitionState = TransitionState.MovingToDisplay;
+        transitionManager.transitionState = TransitionState.MovingToDisplay;
         Vector3 startPos = applyTo.transform.position;
         float timer = 0;
         Debug.LogError("SP: " + startPos);
@@ -140,9 +142,9 @@ public class Transition
         }
 
         if(applyTo.worldState == MovableObjectState.TransitioningToAR)
-            applyTo.transitionState = TransitionState.VRtoAR;
+            transitionManager.transitionState = TransitionState.VRtoAR;
         else if(applyTo.worldState == MovableObjectState.TransitioningToVR)
-            applyTo.transitionState = TransitionState.ARtoVR;
+            transitionManager.transitionState = TransitionState.ARtoVR;
     }
 
     public IEnumerator StartARToVRSeamless(bool inDesktop, Vector3 target){
@@ -155,7 +157,7 @@ public class Transition
         else{
             applyTo.StartDissolve();
         }
-        applyTo.transitionState = TransitionState.MovingFromDisplay;
+        transitionManager.transitionState = TransitionState.MovingFromDisplay;
         yield return null;
 
     }
@@ -171,7 +173,7 @@ public class Transition
             applyTo.StartAssemble();
         }
 
-        applyTo.transitionState = TransitionState.MovingFromDisplay;
+        transitionManager.transitionState = TransitionState.MovingFromDisplay;
         yield return null;
 
     }
@@ -192,7 +194,7 @@ public class Transition
             yield return null;
         }
 
-        applyTo.transitionState = TransitionState.Ended;
+        transitionManager.transitionState = TransitionState.Ended;
         if(applyTo.HasStateAuthority && PlatformManager.IsDesktop()){
             //await GetComponent<NetworkObject>().WaitForStateAuthority();
             applyTo.worldState = MovableObjectState.inVR;

@@ -4927,6 +4927,7 @@ GameObject:
   - component: {fileID: 4489322360082299451}
   - component: {fileID: 1438870830553357678}
   - component: {fileID: 5252255338099852514}
+  - component: {fileID: 8728521183533936522}
   m_Layer: 6
   m_Name: SofaDouble
   m_TagString: MovableObject
@@ -5072,6 +5073,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5252255338099852514}
+  - {fileID: 8728521183533936522}
 --- !u!114 &5252255338099852514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5097,6 +5099,19 @@ MonoBehaviour:
   maxScale: 3
   particleEffectsPrefab: {fileID: 409775443565383602}
   particleEffects: {fileID: 0}
+  transitionManager: {fileID: 0}
+--- !u!114 &8728521183533936522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2791972413739602816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8163d62fc1914747af19e9a8696e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _transitionState: 0
 --- !u!1 &8408595479100699345
 GameObject:

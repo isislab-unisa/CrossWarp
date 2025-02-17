@@ -39,11 +39,8 @@ public class MovableObject : NetworkBehaviour
     public float maxScale = 2.5f;
     public GameObject particleEffectsPrefab;
     public GameObject particleEffects;
-    [Networked, OnChangedRender(nameof(OnTransitionStateChanged))]
-    public TransitionState transitionState {get; set;}
 
-
-    public Transition transition;
+    public TransitionManager transitionManager;
 
     
     public override void Spawned(){
@@ -62,7 +59,8 @@ public class MovableObject : NetworkBehaviour
         }
         if((GetComponent<NetworkObject>().Flags & NetworkObjectFlags.AllowStateAuthorityOverride) > 0)
             Debug.LogWarning("AllowStateAuthOverride attivato");
-        transition = new Transition(this);
+        transitionManager = GetComponent<TransitionManager>();
+
 
         particleEffects = Instantiate(particleEffectsPrefab, transform);
         //particleEffects.GetComponent<ParticleSystem>().Play();
@@ -182,10 +180,6 @@ public class MovableObject : NetworkBehaviour
         foreach(Collider collider in colliders){
             collider.enabled = showing;
         }
-        /*meshRenderer.enabled = showing;
-        collider.enabled = showing;
-        if(showing && (worldState == MovableObjectState.inAR || worldState == MovableObjectState.inVR))
-            meshRenderer.material.SetFloat("_DissolveAmount", 0);*/
     }
 
     private void UpdateWorldState(){
@@ -295,78 +289,6 @@ public class MovableObject : NetworkBehaviour
         networkedScale = newScale;
     }
 
-    public void StartPushInTransition(){
-        Debug.LogError("worldState: " + worldState);
-        if(worldState == MovableObjectState.inAR && HasStateAuthority){
-            worldState = MovableObjectState.TransitioningToVR;
-            transitionState = TransitionState.MovingToDisplay;
-        }
-        //transitionState = TransitionState.MovingToDisplay;
-        /*transition.targetPosition = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
-        StartCoroutine(transition.StartMovingToDisplay());*/
-    }
-
-    public void StartPushInTransitionOnScreen(){
-        Debug.LogError("worldState: " + worldState);
-        if(worldState == MovableObjectState.inAR && HasStateAuthority){
-            worldState = MovableObjectState.TransitioningToVR;
-            transitionState = TransitionState.ARtoVR;
-        }
-        //transitionState = TransitionState.MovingToDisplay;
-        /*transition.targetPosition = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
-        StartCoroutine(transition.StartMovingToDisplay());*/
-    }
-
-    public void StartPullOutTransition(){
-        if(worldState == MovableObjectState.inVR){
-            worldState = MovableObjectState.TransitioningToAR;
-            transitionState = TransitionState.MovingToDisplay;
-        }
-        /*transition.targetPosition = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
-        StartCoroutine(transition.StartMovingToDisplay());*/
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    public async void StartPullOutTransitionRPC(){
-        if(!PlatformManager.IsDesktop())
-            return;
-
-        // può succedere che l'oggetto sia in VR ma il desktop non abbia state authority (succede se l'utente mobile fa resize o rotazione)
-        
-        Debug.LogError("worldState: " + worldState);
-        if(worldState == MovableObjectState.inVR){
-        
-            if(!HasStateAuthority)
-                await GetComponent<NetworkObject>().WaitForStateAuthority();
-
-            worldState = MovableObjectState.TransitioningToAR;
-            transitionState = TransitionState.MovingToDisplay;
-        }
-        /*transition.targetPosition = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
-        StartCoroutine(transition.StartMovingToDisplay());*/
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public async void StartTransitionFromDisplayToVRRPC(){
-        worldState = MovableObjectState.TransitioningToVR;
-        SetShowing(true);
-        if(!PlatformManager.IsDesktop()){
-            StartCoroutine(Dissolve());
-        }
-        else{
-            if(!HasStateAuthority){
-                await GetComponent<NetworkObject>().WaitForStateAuthority();
-            }
-            Transition transition = new Transition(this);
-            StartCoroutine(transition.StartTransitionFromDisplayToVR(Camera.main.transform.position + Camera.main.transform.forward * 0.5f));
-        }
-        /*Debug.LogWarning("STARTTRansition");
-        if(!HasStateAuthority){
-            await GetComponent<NetworkObject>().WaitForStateAuthority();
-        }
-        UpdateWorldState();*/
-    }
-
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void StampaPosizioneRPC(Vector3 lastOffsetToSubplane, Vector3 phonePosition){
         SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
@@ -424,151 +346,6 @@ public class MovableObject : NetworkBehaviour
             Debug.LogWarning("pos: " + Camera.main.transform.TransformPoint(lastOffsetToSubplane));
         }
             
-    }
-
-    
-    public async void OnTransitionStateChanged(){
-        Debug.LogWarning("state: " + transitionState);
-        // if(transitionState == TransitionState.MovingToDisplay && HasStateAuthority){
-        //     if(PlatformManager.IsDesktop() && worldState == MovableObjectState.TransitioningToAR){
-        //         Debug.LogError("passo in AR");
-        //         Transform cam = Camera.main.transform; 
-        //         transition.targetPosition = cam.position + cam.forward * (Camera.main.nearClipPlane + 0.25f);
-        //         StartCoroutine(transition.StartMovingToDisplay());
-        //     }
-        //     else if(!PlatformManager.IsDesktop() && worldState == MovableObjectState.TransitioningToVR){
-        //         Debug.LogError("passo in VR");
-        //         Transform subplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-        //         transition.targetPosition = subplane.position + subplane.forward * 0.25f;
-        //         StartCoroutine(transition.StartMovingToDisplay());
-        //     }
-        // }
-        // else if(transitionState == TransitionState.ARtoVR){
-        //     GetComponent<Outline>().enabled = false;
-        //     if(PlatformManager.IsDesktop()){
-        //         if(!GetComponent<NetworkObject>().HasStateAuthority)
-        //                 await GetComponent<NetworkObject>().WaitForStateAuthority();
-        //         Transform cam = Camera.main.transform;
-        //         StartCoroutine(transition.StartARToVR(true, cam.position + cam.forward * (Camera.main.nearClipPlane + 0.25f)));
-        //     }
-        //     else{
-        //         StartCoroutine(transition.StartARToVR(false, Vector3.zero));
-        //     }
-        // }
-        // else if(transitionState == TransitionState.VRtoAR){
-        //     GetComponent<Outline>().enabled = false;
-        //     if(PlatformManager.IsDesktop()){
-        //         StartCoroutine(transition.StartVRToAR(true, Vector3.zero));
-        //     }
-        //     else{
-        //         await isSelectedBy.RequestStateAuthorityOnSelectedObject();
-        //         Debug.LogWarning("hasSA: " + HasStateAuthority);
-        //         GameObject subplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
-        //         StartCoroutine(transition.StartVRToAR(false, subplane.transform.position - subplane.transform.forward * 0.25f ));
-        //     }
-        // }
-        // else if(transitionState == TransitionState.MovingFromDisplay){
-        //     GetComponent<Outline>().enabled = selected;
-        //     if(PlatformManager.IsDesktop()){
-        //         StartCoroutine(transition.StartMovingFromDisplay(true));
-        //     }
-        //     else{
-        //         //SetShowing(false);
-        //         StartCoroutine(transition.StartMovingFromDisplay(false));
-        //     }
-        // }
-        // else if(transitionState == TransitionState.Ended){
-        //     Debug.LogWarning("HasSA: " + HasStateAuthority);
-        //     if(HasStateAuthority && PlatformManager.IsDesktop())
-        //         worldState = MovableObjectState.inVR;
-        //     else if(HasStateAuthority && !PlatformManager.IsDesktop())
-        //         worldState = MovableObjectState.inAR;
-        // }
-
-        if(transitionState == TransitionState.MovingToDisplay && HasStateAuthority){
-            if(PlatformManager.IsDesktop() && worldState == MovableObjectState.TransitioningToAR){
-                Debug.LogError("passo in AR");
-                Transform NCPCenter = Camera.main.transform.GetChild(0);
-                StartCoroutine(transition.StartMovingToDisplaySeamless(NCPCenter, NCPCenter.position + NCPCenter.forward * 0.05f));
-            }
-            else if(!PlatformManager.IsDesktop() && worldState == MovableObjectState.TransitioningToVR){
-                Debug.LogError("passo in VR");
-                Transform subplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-                StartCoroutine(transition.StartMovingToDisplaySeamless(subplane, subplane.position - subplane.forward * 0.05f));
-            }
-        }
-        else if(transitionState == TransitionState.ARtoVR){
-            GetComponent<Outline>().enabled = false;
-            transitionState = TransitionState.MovingFromDisplay;
-        }
-        else if(transitionState == TransitionState.VRtoAR){
-            GetComponent<Outline>().enabled = false;
-            
-            transitionState = TransitionState.MovingFromDisplay;
-        }
-        else if(transitionState == TransitionState.MovingFromDisplay){
-            // effetti particellari
-            particleEffects.transform.parent = transform;
-            particleEffects.transform.localPosition = particleEffectsPrefab.transform.localPosition;
-            particleEffects.GetComponent<ParticleSystem>().Play();
-            particleEffects.transform.parent = null;
-            Vector3 targetPosition = Vector3.zero;
-
-            // se la transizione è da AR a VR allora il desktop deve richiedere la state authority per occuparsi degli spostamenti dell'oggetto
-            if(worldState == MovableObjectState.TransitioningToVR){
-                if(PlatformManager.IsDesktop()){
-                    StartAssemble();
-                    await GetComponent<NetworkObject>().WaitForStateAuthority();
-                    Transform target = Camera.main.transform.GetChild(0);
-                    targetPosition = target.position + target.forward * 0.25f;
-                }
-                else{
-                    StartDissolve();
-                    Transform target = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-                    targetPosition = target.position + target.forward * 0.25f;
-                }
-            }
-            // se la transizione è da VR ad AR allora il client che ha selezionato l'oggetto deve richiedere la state authority per occuparsi degli spostamenti dell'oggetto
-            else if(worldState == MovableObjectState.TransitioningToAR){
-                if(PlatformManager.IsDesktop()){
-                    StartDissolve();
-                    Transform target = Camera.main.transform.GetChild(0);
-                    targetPosition = target.position - target.forward * 0.25f;
-                    Debug.LogError("target: " + targetPosition);
-                }
-                else{
-                    StartAssemble();
-                    await isSelectedBy.RequestStateAuthorityOnSelectedObject();
-                    Transform target = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-                    targetPosition = target.position - target.forward * 0.25f;
-                    Debug.LogError("target: " + targetPosition);
-                    Debug.LogError("HasSAX: " + HasStateAuthority);
-                }
-            }
-
-            // che sia desktop o meno tutti i client chiamano la fase finale della transizione
-            if(PlatformManager.IsDesktop()){
-                //Transform target = Camera.main.transform.GetChild(0);
-                StartCoroutine(transition.StartMovingFromDisplaySeamless(targetPosition));
-            }
-            else if(!PlatformManager.IsDesktop()){
-                //Transform target = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
-                StartCoroutine(transition.StartMovingFromDisplaySeamless(targetPosition));
-            }
-        }
-        else if(transitionState == TransitionState.Ended){
-            Debug.LogWarning("HasSA: " + HasStateAuthority);
-            GetComponent<Outline>().enabled = selected;
-            // if(HasStateAuthority && PlatformManager.IsDesktop()){
-            //     //await GetComponent<NetworkObject>().WaitForStateAuthority();
-            //     worldState = MovableObjectState.inVR;
-            // }
-            // else if(HasStateAuthority && !PlatformManager.IsDesktop()){
-            //     //await isSelectedBy.RequestStateAuthorityOnSelectedObject();
-            //     worldState = MovableObjectState.inAR;
-            // }
-            Debug.LogError("worldstateEnd: " + worldState);
-        }
     }
 
 }

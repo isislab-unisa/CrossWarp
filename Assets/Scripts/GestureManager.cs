@@ -226,7 +226,7 @@ public class GestureManager : NetworkBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity ,layerMask))
             {
                 if(hit.collider.GetComponent<Subplane>()){
-                    phoneRepresentation.networkedSelectedObject.StartPushInTransitionOnScreen();
+                    phoneRepresentation.networkedSelectedObject.GetComponent<TransitionManager>().StartPushInTransitionOnScreen();
                 }
             }
         }
@@ -265,11 +265,11 @@ public class GestureManager : NetworkBehaviour
             return;
         if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f < gesture.position.y){
             Debug.LogWarning("push in");
-            phoneRepresentation.networkedSelectedObject.StartPushInTransition();
+            phoneRepresentation.networkedSelectedObject.GetComponent<TransitionManager>().StartPushInTransition();
         }
         else if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f > gesture.position.y){
             Debug.LogWarning("pull out");
-            phoneRepresentation.networkedSelectedObject.StartPullOutTransitionRPC();
+            phoneRepresentation.networkedSelectedObject.GetComponent<TransitionManager>().StartPullOutTransitionRPC();
         }
     }
 

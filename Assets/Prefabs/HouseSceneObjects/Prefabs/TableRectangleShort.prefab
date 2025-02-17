@@ -4858,6 +4858,7 @@ GameObject:
   - component: {fileID: 6377214240601407901}
   - component: {fileID: 6887435708545975193}
   - component: {fileID: 2455920542769408115}
+  - component: {fileID: 8878806859930582605}
   m_Layer: 6
   m_Name: TableRectangleShort
   m_TagString: MovableObject
@@ -5001,6 +5002,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 2455920542769408115}
+  - {fileID: 8878806859930582605}
 --- !u!114 &2455920542769408115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5026,6 +5028,19 @@ MonoBehaviour:
   maxScale: 1
   particleEffectsPrefab: {fileID: 5842443136351640673}
   particleEffects: {fileID: 0}
+  transitionManager: {fileID: 0}
+--- !u!114 &8878806859930582605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4461590733969933333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8163d62fc1914747af19e9a8696e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _transitionState: 0
 --- !u!1 &5842443136351640673
 GameObject:

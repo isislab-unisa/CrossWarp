@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4369851338894069320}
   - component: {fileID: 2546990531765683612}
   - component: {fileID: 5868026411862389517}
+  - component: {fileID: 6322652154127599200}
   m_Layer: 6
   m_Name: SofaArmChair
   m_TagString: MovableObject
@@ -159,6 +160,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5868026411862389517}
+  - {fileID: 6322652154127599200}
 --- !u!114 &5868026411862389517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,6 +186,19 @@ MonoBehaviour:
   maxScale: 2.5
   particleEffectsPrefab: {fileID: 4131670540841159795}
   particleEffects: {fileID: 0}
+  transitionManager: {fileID: 0}
+--- !u!114 &6322652154127599200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222816445042158756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8163d62fc1914747af19e9a8696e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _transitionState: 0
 --- !u!1 &4131670540841159795
 GameObject:

@@ -5471,6 +5471,7 @@ GameObject:
   - component: {fileID: 7041871650027293214}
   - component: {fileID: 4439037118756613189}
   - component: {fileID: 4291548218951675994}
+  - component: {fileID: 3826227064550824817}
   m_Layer: 6
   m_Name: Gingy
   m_TagString: MovableObject
@@ -5568,6 +5569,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 4291548218951675994}
+  - {fileID: 3826227064550824817}
 --- !u!114 &4291548218951675994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5593,6 +5595,19 @@ MonoBehaviour:
   maxScale: 1.5
   particleEffectsPrefab: {fileID: 3425634921463816487}
   particleEffects: {fileID: 0}
+  transitionManager: {fileID: 0}
+--- !u!114 &3826227064550824817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2981997604817611951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8163d62fc1914747af19e9a8696e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _transitionState: 0
 --- !u!1 &3425634921463816487
 GameObject:
