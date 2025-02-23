@@ -155,6 +155,20 @@ public class PhoneRepresentation : NetworkBehaviour
             return await networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
         return true;
     }
+    
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public async void RequestStateAuthorityOnObjectRpc(NetworkId selectedId){
+        NetworkObject obj;
+        MovableObject orphanObject;
+        if(Runner.TryFindObject(selectedId, out obj)){
+            orphanObject = obj.gameObject.GetComponent<MovableObject>();
+            if(!orphanObject.GetComponent<NetworkObject>().HasStateAuthority){
+                await orphanObject.GetComponent<NetworkObject>().WaitForStateAuthority();
+                Debug.LogError("lastPos: " + orphanObject.lastOffsetToSubplane);
+                orphanObject.UpdateWorldState();
+            }
+        }
+    }
 
     // RPCs
     // Funzione che viene eseguita solo sul client nel mondo VR, quindi l'oggetto PhoneRepresentation non ha StateAuthority, motivo per cui è necessaria l'RPC e non è possibile modificare la proprietà networked selectedObject
@@ -162,9 +176,15 @@ public class PhoneRepresentation : NetworkBehaviour
     public async void RaycastFromVRCameraRPC(Vector3 cameraMappedPoint, Vector3 direction, bool isMirror){
         if(!PlatformManager.IsDesktop())
             return;
+            
+        LayerMask layerMask = LayerMask.GetMask("MovableObjectsPhysics");
+        if(layerMask == -1){
+            Debug.LogError("Il LayerMask MovabeleObjectsPhysics non è definito");
+        }
+        layerMask = ~layerMask;
         
         Ray ray = Camera.main.ViewportPointToRay(cameraMappedPoint);
-        if (Physics.Raycast(ray, out RaycastHit hit)){
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)){
             if(hit.collider.tag.Equals("MovableObject")){
                 TrySelectObject(hit.collider.GetComponent<MovableObject>());
             }
@@ -194,9 +214,9 @@ public class PhoneRepresentation : NetworkBehaviour
             return;
         if(!networkedSelectedObject)
             return;
-        LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+        LayerMask layerMask = LayerMask.GetMask("MovableObjects", "MovableObjectsPhysics");
         if(layerMask == -1){
-            Debug.LogError("Il LayerMask MovabeleObjects non è definito");
+            Debug.LogError("Il LayerMask MovabeleObjects e/o MovableObjectsPhysics non è definito");
         }
         // esclusione del layer di movableobjects
         Debug.LogWarning("CamMapPnt: " + cameraMappedPoint);

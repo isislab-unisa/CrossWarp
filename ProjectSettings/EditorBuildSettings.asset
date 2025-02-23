@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HouseScene.unity
     guid: 983518ac79346d24db664050afe28e91
+  - enabled: 1
+    path: Assets/Scenes/RollingSphereScene.unity
+    guid: 73c76dbf07887b640ba57badfd00d237
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 0aba118bd2caa9a4fb51c7c4fdb9dcba, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: edc5dc7361ff4d640b88ab1ed2f7dd8a, type: 2}

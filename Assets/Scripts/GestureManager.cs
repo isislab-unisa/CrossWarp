@@ -120,9 +120,15 @@ public class GestureManager : NetworkBehaviour
         if(gesture.isCanceled || isDragging || isTwoFingerDragging || isTwisting || isPinching)
             return;
 
+        LayerMask layerMask = LayerMask.GetMask("MovableObjectsPhysics");
+        if(layerMask == -1){
+            Debug.LogError("Il LayerMask MovabeleObjectsPhysics non è definito");
+        }
+        layerMask = ~layerMask;
+
         Ray ray = Camera.main.ScreenPointToRay(gesture.startPosition);
         Debug.DrawRay(ray.origin, ray.direction * 10, Color.red, 5f);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
             Vector3 direction = ray.direction;
             Debug.Log("BCZ colpisco, " + hit.transform.gameObject.name);
@@ -150,8 +156,14 @@ public class GestureManager : NetworkBehaviour
         dragGestureLastUpdate = Time.deltaTime;
         isDragging = true;
         currentDragGesture = dragGesture;
+        LayerMask layerMask = LayerMask.GetMask("MovableObjectsPhysics");
+        if(layerMask == -1){
+            Debug.LogError("Il LayerMask MovabeleObjects non è definito");
+        }
+        // esclusione del layer di movableobjects
+        layerMask = ~layerMask;
         Ray ray = Camera.main.ScreenPointToRay(dragGesture.position);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity ,layerMask))
         {
             if(hit.collider.GetComponent<Subplane>())
                 dragGesture.onUpdated += HandleDragOnSubplane;
@@ -168,7 +180,7 @@ public class GestureManager : NetworkBehaviour
     {
         if(!phoneRepresentation.networkedSelectedObject)
             return;
-        LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+        LayerMask layerMask = LayerMask.GetMask("MovableObjects", "MovableObjectsPhysics");
         if(layerMask == -1){
             Debug.LogError("Il LayerMask MovabeleObjects non è definito");
         }
@@ -189,7 +201,7 @@ public class GestureManager : NetworkBehaviour
     private async void HandleDragOnSubplane(DragGesture gesture){
         if(!phoneRepresentation.networkedSelectedObject)
             return;
-        LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+        LayerMask layerMask = LayerMask.GetMask("MovableObjects", "MovableObjectsPhysics");
         if(layerMask == -1){
             Debug.LogError("Il LayerMask MovabeleObjects non è definito");
         }
@@ -216,7 +228,7 @@ public class GestureManager : NetworkBehaviour
         Debug.Log("stopped drag");
 
         if(phoneRepresentation.networkedSelectedObject){
-            LayerMask layerMask = LayerMask.GetMask("MovableObjects");
+            LayerMask layerMask = LayerMask.GetMask("MovableObjects", "MovableObjectsPhysics");
             if(layerMask == -1){
                 Debug.LogError("Il LayerMask MovabeleObjects non è definito");
             }

@@ -18,4 +18,8 @@ public class StartMenu : MonoBehaviour
         SceneManager.LoadScene("HouseScene");
     }
 
+    public void OnRollingSphereDemoBtnPressed(){
+        SceneManager.LoadScene("RollingSphereScene");
+    }
+
 }

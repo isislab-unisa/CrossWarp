@@ -39,8 +39,8 @@ public class MovableObject : NetworkBehaviour
     public float maxScale = 2.5f;
     public GameObject particleEffectsPrefab;
     public GameObject particleEffects;
-
     public TransitionManager transitionManager;
+    public GameObject ObjectShadow;
 
     
     public override void Spawned(){
@@ -53,7 +53,7 @@ public class MovableObject : NetworkBehaviour
                 else
                     activePhoneSubplane = null;
             }
-            lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+            lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane(transform.rotation);
             lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
             networkedScale = transform.localScale;
         }
@@ -71,6 +71,12 @@ public class MovableObject : NetworkBehaviour
         foreach(Renderer renderer in renderers){
             renderer.material.SetFloat("_SeedForRandomNoise", seedForNoise);
         }
+        if(ObjectShadow){
+            ObjectShadow.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            ObjectShadow.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            Physics.IgnoreCollision(collider, ObjectShadow.GetComponent<Collider>());
+        }
+
         isSpawned = true;
     }
 
@@ -146,6 +152,28 @@ public class MovableObject : NetworkBehaviour
             SetShowing(false);
         }
 
+        if(ObjectShadow){
+            if(selected){
+                Rigidbody rigidbody = ObjectShadow.GetComponent<Rigidbody>();
+                rigidbody.isKinematic = true;
+                ObjectShadow.transform.position = transform.position;
+                ObjectShadow.transform.rotation = transform.rotation;
+                rigidbody.velocity = Vector3.zero;
+                rigidbody.angularVelocity = Vector3.zero;
+            }
+            else if(HasStateAuthority){
+                ObjectShadow.GetComponent<Rigidbody>().isKinematic = false;
+                lastOffsetToSubplane = CalculateLastOffsetToSubplane(ObjectShadow.transform.position);
+                lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane(ObjectShadow.transform.rotation);
+            }
+            else if(!HasStateAuthority){
+                Rigidbody rigidbody = ObjectShadow.GetComponent<Rigidbody>();
+                rigidbody.isKinematic = false;
+                ObjectShadow.transform.position = transform.position;
+                ObjectShadow.transform.rotation = transform.rotation;
+            }
+        }
+
         //if(transitionState != TransitionState.ARtoVR && transitionState != TransitionState.VRtoAR){
             if(!PlatformManager.IsDesktop()){
                 SubplaneConfig subplaneConfig = FindObjectOfType<SubplaneConfig>();
@@ -182,7 +210,7 @@ public class MovableObject : NetworkBehaviour
         }
     }
 
-    private void UpdateWorldState(){
+    public void UpdateWorldState(){
         if(worldState == MovableObjectState.TransitioningToAR || worldState == MovableObjectState.TransitioningToVR)
             return;
         if(HasStateAuthority){
@@ -207,7 +235,7 @@ public class MovableObject : NetworkBehaviour
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-            lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+            lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane(transform.rotation);
             lastOffsetToSubplane = CalculateLastOffsetToSubplane(transform.position);
 
             Debug.Log("isSelectedBy: " + isSelectedBy);
@@ -248,7 +276,7 @@ public class MovableObject : NetworkBehaviour
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane(transform.rotation);
         lastOffsetToSubplane = CalculateLastOffsetToSubplane(newPosition);
 
         UpdateWorldState();
@@ -268,7 +296,7 @@ public class MovableObject : NetworkBehaviour
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane(transform.rotation);
     }
 
     public void UpdateRotation(float rotationAngle, Vector3 rotationAxis){
@@ -280,7 +308,7 @@ public class MovableObject : NetworkBehaviour
                 activePhoneSubplane = subplaneConfig.GetSelectedSubplane();
             else
                 activePhoneSubplane = null;
-        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane();
+        lastRotationOffsetToSubplane = CalculateLastRotationOffsetToSubplane(transform.rotation);
 
     }
 
@@ -309,6 +337,8 @@ public class MovableObject : NetworkBehaviour
             return NCPCenter.InverseTransformPoint(nextPosition);
         }
         if(!activePhoneSubplane)
+            activePhoneSubplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
+        if(!activePhoneSubplane)
             return Vector3.zero;
 
         Vector3 offset = activePhoneSubplane.transform.InverseTransformPoint(nextPosition);
@@ -316,15 +346,17 @@ public class MovableObject : NetworkBehaviour
         return offset;
     }
 
-    public Quaternion CalculateLastRotationOffsetToSubplane(){
+    public Quaternion CalculateLastRotationOffsetToSubplane(Quaternion nextRotation){
         if(PlatformManager.IsDesktop()){
             Transform NCPCenter = Camera.main.transform.GetChild(0);
-            return Quaternion.Inverse(NCPCenter.rotation) * transform.rotation;
+            return Quaternion.Inverse(NCPCenter.rotation) * nextRotation;
         }
+        if(!activePhoneSubplane)
+            activePhoneSubplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
         if(!activePhoneSubplane)
             return Quaternion.identity;
 
-        Quaternion rotation = Quaternion.Inverse(activePhoneSubplane.transform.rotation) * transform.rotation;
+        Quaternion rotation = Quaternion.Inverse(activePhoneSubplane.transform.rotation) * nextRotation;
 
         return rotation;
     }
