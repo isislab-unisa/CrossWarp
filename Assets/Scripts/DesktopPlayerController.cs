@@ -4,13 +4,8 @@ using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using UnityEngine;
 
-public class DesktopSphereController : NetworkBehaviour
+public class DesktopPlayerController : NetworkBehaviour
 {
-
-    public GameObject hitObjectPrefab;
-    public GameObject phoneRepresentationPrefab;
-    private GameObject selectedObject;
-    public Dictionary<PlayerRef, GameObject> playersRepresentation {get; set;}
     private int playersConfiguring = 0;
     public GameObject ImageTrackingCanvasPrefab;
     private GameObject ImageTrackingCanvasInstance;
@@ -19,7 +14,6 @@ public class DesktopSphereController : NetworkBehaviour
     {
         if(PlatformManager.IsDesktop()){
             ImageTrackingCanvasInstance = Instantiate(ImageTrackingCanvasPrefab);
-            playersRepresentation = new Dictionary<PlayerRef, GameObject>();
             // screen height in cm
             float screenHeight = (Screen.height/Screen.dpi)*2.54f;
             // frustum height in m

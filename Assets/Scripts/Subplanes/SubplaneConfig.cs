@@ -50,7 +50,7 @@ public class SubplaneConfig : MonoBehaviour
         isConfig = true;
         OnConfigurationModeChanged();
         if(configurationMode == ConfigurationMode.ImageTracking){
-            DesktopSphereController desktopSphereController = FindObjectOfType<DesktopSphereController>();
+            DesktopPlayerController desktopSphereController = FindObjectOfType<DesktopPlayerController>();
             if(desktopSphereController)
                 desktopSphereController.ToggleConfiguringRpc(true);
         }
@@ -68,7 +68,7 @@ public class SubplaneConfig : MonoBehaviour
         isConfig = false;
         placementInteractable.enabled = false;
         if(configurationMode == ConfigurationMode.ImageTracking){
-            DesktopSphereController desktopSphereController = FindObjectOfType<DesktopSphereController>();
+            DesktopPlayerController desktopSphereController = FindObjectOfType<DesktopPlayerController>();
             if(desktopSphereController)
                 desktopSphereController.ToggleConfiguringRpc(false);
         }
@@ -110,7 +110,7 @@ public class SubplaneConfig : MonoBehaviour
         if(!GetSelectedSubplane())
             return;
         float height = anchors[0].transform.position.y - anchors[1].transform.position.y;
-        DesktopSphereController desktopSphereController = FindObjectOfType<DesktopSphereController>();
+        DesktopPlayerController desktopSphereController = FindObjectOfType<DesktopPlayerController>();
         if(desktopSphereController)
             desktopSphereController.RecalibrateNearClipPlaneRpc(height);
     }
@@ -126,7 +126,7 @@ public class SubplaneConfig : MonoBehaviour
     // when we don't want to edit the planes anymore, config ends
     public void EndConfig(){
         if(canConfig){
-            DesktopSphereController desktopSphereController = FindObjectOfType<DesktopSphereController>();
+            DesktopPlayerController desktopSphereController = FindObjectOfType<DesktopPlayerController>();
             if(desktopSphereController)
                 desktopSphereController.ToggleConfiguringRpc(false);
         }
@@ -151,7 +151,7 @@ public class SubplaneConfig : MonoBehaviour
     // when we want to edit the config after a config end
     public void EditConfig(){
         if(!canConfig){
-            DesktopSphereController desktopSphereController = FindObjectOfType<DesktopSphereController>();
+            DesktopPlayerController desktopSphereController = FindObjectOfType<DesktopPlayerController>();
             if(desktopSphereController)
                 desktopSphereController.ToggleConfiguringRpc(true);
         }
