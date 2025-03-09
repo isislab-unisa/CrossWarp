@@ -72,4 +72,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 
-/Assets/UnityTechnologies
+/[Aa]ssets/UnityTechnologies
+
+# Photon App Settings
+/[Aa]ssets/Photon/Fusion/Resources/PhotonAppSettings.asset
+Assets/Photon/Fusion/Resources/PhotonAppSettings.asset

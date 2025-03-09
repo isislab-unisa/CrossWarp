@@ -89,7 +89,7 @@ public class ImageTrackingManager : MonoBehaviour
 
         foreach (ARTrackedImage removedImage in eventArgs.removed)
         {
-            Debug.LogWarning("Rimossa immagine: " + removedImage.referenceImage.name);
+            Debug.Log("Rimossa immagine: " + removedImage.referenceImage.name);
         }
     }
 
@@ -101,8 +101,8 @@ public class ImageTrackingManager : MonoBehaviour
     }
 
     public void CreateSubplaneAnchorByImage(ARTrackedImage newImage){
-        Debug.LogError("image pos: " + newImage.transform.position);
-        Debug.LogError("image rot: " + newImage.transform.rotation);
+        Debug.Log("image pos: " + newImage.transform.position);
+        Debug.Log("image rot: " + newImage.transform.rotation);
         trackedImageObject = subplaneConfig.CreateSubplaneAnchor(newImage.transform.position, newImage.transform.rotation);
         //trackedImageObject.transform.rotation *= GetRotationRelativeToTransform(trackedImageObject.transform, newImage.transform);
         trackedAnchors.Add(newImage.trackableId, trackedImageObject);
@@ -110,16 +110,16 @@ public class ImageTrackingManager : MonoBehaviour
 
     public void ResetImageTrackingConfiguration(){
         foreach(KeyValuePair<TrackableId, GameObject> entry in trackedAnchors){
-            Debug.LogWarning("Distruggo: " + trackedAnchors[entry.Key]);
+            Debug.Log("Distruggo: " + trackedAnchors[entry.Key]);
             Destroy(trackedAnchors[entry.Key]);
         }
         trackedAnchors.Clear();
-        Debug.LogWarning("Pulito il tracked anchors: " + trackedAnchors);
+        Debug.Log("Pulito il tracked anchors: " + trackedAnchors);
         m_TrackedImageManager.enabled = true;
     }
 
     public void DisableTrackingConfiguration(){
-        Debug.LogWarning("Disattivo imagetracking");
+        Debug.Log("Disattivo imagetracking");
         if(!m_TrackedImageManager){
             Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
             return;
@@ -129,7 +129,7 @@ public class ImageTrackingManager : MonoBehaviour
     }
 
     public void ActivateTrackingConfiguration(){
-        Debug.LogWarning("Attivo imagetracking");
+        Debug.Log("Attivo imagetracking");
         if(!m_TrackedImageManager){
             Debug.LogError("ImageTrackingManager: no reference to ARTrackedImageManager");
             return;

@@ -12,20 +12,7 @@ public class Subplane : MonoBehaviour
 
     // forse non serve più
     private bool isVisible = true;
-    void Start()
-    {
-        
-    }
 
-
-    void Update()
-    {
-        /*if(anchors.Count == 3 && isVisible){
-            //Debug.Log("Renderizzo subplane: " + anchors[0]);
-            // da migliorare in modo che renderizza solo quando cambiano i punti
-            RenderSubplane();
-        }*/
-    }
 
     public void SetAnchors(List<GameObject> selectedAnchors){
         anchors = selectedAnchors;
@@ -155,15 +142,8 @@ public class Subplane : MonoBehaviour
     }
 
     public Vector3 NormalizedHitPoint(Vector3 localHitPoint){
-        //TODO
-        // Fixare il fatto che la superficie del subplane ha larghezza in z invece che in y
         float x = localHitPoint.x + 0.5f;
         float y = localHitPoint.y + 0.5f;
-        /*if(localHitPoint.y >= 0)
-            y = 0.5f - localHitPoint.y;
-        else
-            y = -localHitPoint.y + 0.5f;*/
-
         Debug.Log("x, y: " + x + ", " + y);
         return new Vector3(x, y, 0);
     }

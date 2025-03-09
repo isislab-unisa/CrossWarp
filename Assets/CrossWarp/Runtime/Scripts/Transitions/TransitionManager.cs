@@ -17,7 +17,7 @@ public class TransitionManager : NetworkBehaviour
     }
 
     public void StartPushInTransition(){
-        Debug.LogError("worldState: " + movableObject.worldState);
+        Debug.Log("worldState: " + movableObject.worldState);
         if(movableObject.worldState == MovableObjectState.inAR && HasStateAuthority){
             movableObject.worldState = MovableObjectState.TransitioningToVR;
             transitionState = TransitionState.MovingToDisplay;
@@ -29,7 +29,7 @@ public class TransitionManager : NetworkBehaviour
 
 
     public void StartPushInTransitionOnScreen(){
-        Debug.LogError("worldState: " + movableObject.worldState);
+        Debug.Log("worldState: " + movableObject.worldState);
         if(movableObject.worldState == MovableObjectState.inAR && HasStateAuthority){
             movableObject.worldState = MovableObjectState.TransitioningToVR;
             transitionState = TransitionState.ARtoVR;
@@ -55,7 +55,7 @@ public class TransitionManager : NetworkBehaviour
 
         // può succedere che l'oggetto sia in VR ma il desktop non abbia state authority (succede se l'utente mobile fa resize o rotazione)
         
-        Debug.LogError("worldState: " + movableObject.worldState);
+        Debug.Log("worldState: " + movableObject.worldState);
         if(movableObject.worldState == MovableObjectState.inVR){
         
             if(!HasStateAuthority)
@@ -69,16 +69,16 @@ public class TransitionManager : NetworkBehaviour
     }
 
     public async void OnTransitionStateChanged(){
-        Debug.LogWarning("state: " + transitionState);
+        Debug.Log("state: " + transitionState);
 
         if(transitionState == TransitionState.MovingToDisplay && movableObject.HasStateAuthority){
             if(PlatformManager.IsDesktop() && movableObject.worldState == MovableObjectState.TransitioningToAR){
-                Debug.LogError("passo in AR");
+                Debug.Log("passo in AR");
                 Transform NCPCenter = Camera.main.transform.GetChild(0);
                 StartCoroutine(transition.StartMovingToDisplaySeamless(NCPCenter, NCPCenter.position + NCPCenter.forward * 0.05f));
             }
             else if(!PlatformManager.IsDesktop() && movableObject.worldState == MovableObjectState.TransitioningToVR){
-                Debug.LogError("passo in VR");
+                Debug.Log("passo in VR");
                 Transform subplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
                 StartCoroutine(transition.StartMovingToDisplaySeamless(subplane, subplane.position - subplane.forward * 0.05f));
             }
@@ -120,15 +120,16 @@ public class TransitionManager : NetworkBehaviour
                     movableObject.StartDissolve();
                     Transform target = Camera.main.transform.GetChild(0);
                     targetPosition = target.position - target.forward * 0.25f;
-                    Debug.LogError("target: " + targetPosition);
+                    Debug.Log("target: " + targetPosition);
                 }
+                
                 else{
                     movableObject.StartAssemble();
                     await movableObject.isSelectedBy.RequestStateAuthorityOnSelectedObject();
                     Transform target = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane().transform;
                     targetPosition = target.position - target.forward * 0.25f;
-                    Debug.LogError("target: " + targetPosition);
-                    Debug.LogError("HasSAX: " + movableObject.HasStateAuthority);
+                    Debug.Log("target: " + targetPosition);
+                    Debug.Log("HasSAX: " + movableObject.HasStateAuthority);
                 }
             }
 
@@ -143,7 +144,7 @@ public class TransitionManager : NetworkBehaviour
             }
         }
         else if(transitionState == TransitionState.Ended){
-            Debug.LogWarning("HasSA: " + movableObject.HasStateAuthority);
+            Debug.Log("HasSA: " + movableObject.HasStateAuthority);
             GetComponent<Outline>().enabled = movableObject.selected;
             // if(movableObject.HasStateAuthority && PlatformManager.IsDesktop()){
             //     //await GetComponent<NetworkObject>().WaitForStateAuthority();
@@ -153,7 +154,7 @@ public class TransitionManager : NetworkBehaviour
             //     //await isSelectedBy.RequestStateAuthorityOnSelectedObject();
             //     movableObject.worldState = MovableObjectState.inAR;
             // }
-            Debug.LogError("worldstateEnd: " + movableObject.worldState);
+            Debug.Log("worldstateEnd: " + movableObject.worldState);
         }
     }
 

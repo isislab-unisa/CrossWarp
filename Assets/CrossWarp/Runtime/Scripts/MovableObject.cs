@@ -219,7 +219,7 @@ public class MovableObject : NetworkBehaviour
             else
                 worldState = MovableObjectState.inAR;
         }
-        Debug.LogWarning("worldState: " + worldState);
+        Debug.Log("worldState: " + worldState);
     }
 
     public async Task<bool> TrySelectObject(PhoneRepresentation playerSelecting){
@@ -325,10 +325,10 @@ public class MovableObject : NetworkBehaviour
             localPhoneSubplane = subplaneConfig.GetSelectedSubplane();
         else
             localPhoneSubplane = null;
-        Debug.LogWarning("offsetTouSub: " + lastOffsetToSubplane);
-        Debug.LogWarning("phone relative: " + phonePosition);
+        Debug.Log("offsetTouSub: " + lastOffsetToSubplane);
+        Debug.Log("phone relative: " + phonePosition);
         if(localPhoneSubplane)
-            Debug.LogWarning("renderPosRPC: " + (lastOffsetToSubplane + localPhoneSubplane.transform.position));
+            Debug.Log("renderPosRPC: " + (lastOffsetToSubplane + localPhoneSubplane.transform.position));
     }
 
     public Vector3 CalculateLastOffsetToSubplane(Vector3 nextPosition){
@@ -368,14 +368,14 @@ public class MovableObject : NetworkBehaviour
     public void OnSelectedChanged(){
         GetComponent<Outline>().enabled = selected;
         
-        Debug.LogWarning("offset: " + lastOffsetToSubplane);
+        Debug.Log("offset: " + lastOffsetToSubplane);
         if(!PlatformManager.IsDesktop()){
             GameObject localSubplane = FindObjectOfType<SubplaneConfig>().GetSelectedSubplane();
-            Debug.LogWarning("pos: " + localSubplane.transform.TransformPoint(lastOffsetToSubplane));
+            Debug.Log("pos: " + localSubplane.transform.TransformPoint(lastOffsetToSubplane));
         }
         else{
             
-            Debug.LogWarning("pos: " + Camera.main.transform.TransformPoint(lastOffsetToSubplane));
+            Debug.Log("pos: " + Camera.main.transform.TransformPoint(lastOffsetToSubplane));
         }
             
     }

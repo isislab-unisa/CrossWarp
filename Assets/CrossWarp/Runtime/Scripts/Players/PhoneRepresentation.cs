@@ -114,7 +114,7 @@ public class PhoneRepresentation : NetworkBehaviour
     // false: something went wrong
     public async Task<bool> TrySelectObject(MovableObject obj)
     {
-        Debug.LogWarning("networked obj: " + networkedSelectedObject);
+        Debug.Log("networked obj: " + networkedSelectedObject);
         if(networkedSelectedObject && obj.gameObject == networkedSelectedObject.gameObject){
             // deselect selected object
             networkedSelectedObject.ReleaseSelection();
@@ -164,7 +164,7 @@ public class PhoneRepresentation : NetworkBehaviour
             orphanObject = obj.gameObject.GetComponent<MovableObject>();
             if(!orphanObject.GetComponent<NetworkObject>().HasStateAuthority){
                 await orphanObject.GetComponent<NetworkObject>().WaitForStateAuthority();
-                Debug.LogError("lastPos: " + orphanObject.lastOffsetToSubplane);
+                Debug.Log("lastPos: " + orphanObject.lastOffsetToSubplane);
                 orphanObject.UpdateWorldState();
             }
         }
@@ -219,7 +219,7 @@ public class PhoneRepresentation : NetworkBehaviour
             Debug.LogError("Il LayerMask MovabeleObjects e/o MovableObjectsPhysics non è definito");
         }
         // esclusione del layer di movableobjects
-        Debug.LogWarning("CamMapPnt: " + cameraMappedPoint);
+        Debug.Log("CamMapPnt: " + cameraMappedPoint);
         layerMask = ~layerMask;
         Ray ray = Camera.main.ViewportPointToRay(cameraMappedPoint);
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity ,layerMask)){

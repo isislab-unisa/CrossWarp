@@ -30,8 +30,8 @@ public class Transition
     public IEnumerator StartMovingToDisplay(){
         Vector3 startPos = applyTo.transform.position;
         float timer = 0;
-        Debug.LogError("SP: " + startPos);
-        Debug.LogError("TP: " + targetPosition);
+        Debug.Log("SP: " + startPos);
+        Debug.Log("TP: " + targetPosition);
         while(startPos != targetPosition && timer < transitionDuration) 
         {
             float progress = timer / transitionDuration;
@@ -54,7 +54,7 @@ public class Transition
         particleSystem.Play();
         if(inDesktop){
             applyTo.transform.position = target;
-            Debug.LogWarning("posizione: " + applyTo.transform.position);
+            Debug.Log("posizione: " + applyTo.transform.position);
             applyTo.StartAssemble();
             //applyTo.SetShowing(true);
         }
@@ -80,14 +80,14 @@ public class Transition
         }
         else{
             applyTo.transform.position = target;
-            Debug.LogWarning("posizione: " + applyTo.transform.position);
+            Debug.Log("posizione: " + applyTo.transform.position);
             applyTo.StartAssemble();
         }
         
         yield return new WaitForSeconds(particleSystem.main.duration);
         if(!inDesktop && applyTo.HasStateAuthority){
             applyTo.UpdatePosition(target);
-            Debug.LogWarning("update position: " + target);
+            Debug.Log("update position: " + target);
         }
         
         transitionManager.transitionState = TransitionState.MovingFromDisplay;
@@ -112,7 +112,7 @@ public class Transition
         float timer = 0;
         applyTo.transform.position = targetPosition;
         applyTo.Assemble();
-        Debug.LogWarning("UpdateTRansform after assemble");
+        Debug.Log("UpdateTRansform after assemble");
         applyTo.UpdatePosition(applyTo.transform.position);
 
         /*while(timer < transitionDuration) 
@@ -130,8 +130,8 @@ public class Transition
         transitionManager.transitionState = TransitionState.MovingToDisplay;
         Vector3 startPos = applyTo.transform.position;
         float timer = 0;
-        Debug.LogError("SP: " + startPos);
-        Debug.LogError("TP: " + targetPosition);
+        Debug.Log("SP: " + startPos);
+        Debug.Log("TP: " + targetPosition);
         while(startPos != targetPosition && timer < transitionDuration) 
         {
             float progress = timer / transitionDuration;
@@ -182,8 +182,8 @@ public class Transition
 
         Vector3 startPos = applyTo.transform.position;
         float timer = 0;
-        Debug.LogError("SP: " + startPos);
-        Debug.LogError("TP: " + targetPosition);
+        Debug.Log("SP: " + startPos);
+        Debug.Log("TP: " + targetPosition);
         while(startPos != targetPosition && timer < transitionDuration) 
         {
             float progress = timer / transitionDuration;

@@ -96,7 +96,7 @@ public class GestureManager : NetworkBehaviour
     // TAP GESTURE HANDLING
 
     public void TapGestureStart(TapGesture gesture){
-        Debug.LogWarning("Chiamata HandleARTap");
+        Debug.Log("Chiamata HandleARTap");
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
         // se non è ancora stato creato un subplane non vogliamo gestire i touch del giocatore
@@ -109,8 +109,8 @@ public class GestureManager : NetworkBehaviour
     }
 
     public void HandleARTap(TapGesture gesture){
-        Debug.LogWarning("Finita la gesture Tap. isDragging: " + isDragging);
-        Debug.LogWarning("Tap isCanceled? " + gesture.isCanceled);
+        Debug.Log("Finita la gesture Tap. isDragging: " + isDragging);
+        Debug.Log("Tap isCanceled? " + gesture.isCanceled);
         if(!subplaneConfig)
             subplaneConfig = FindFirstObjectByType<SubplaneConfig>();
         
@@ -215,7 +215,7 @@ public class GestureManager : NetworkBehaviour
                 Vector3 cameraMappedPoint = hittedSubplane.NormalizedHitPoint(hit.transform.InverseTransformPoint(hit.point));
                 if(lastHitOnSubplane == null || Vector3.Distance(cameraMappedPoint, lastHitOnSubplane) >= hitOnSubplaneThreshold){
                     phoneRepresentation.ContinousRaycastFromVRCameraRPC(cameraMappedPoint);
-                    Debug.LogWarning("distanza: " + Vector3.Distance(cameraMappedPoint, lastHitOnSubplane));
+                    Debug.Log("distanza: " + Vector3.Distance(cameraMappedPoint, lastHitOnSubplane));
                     lastHitOnSubplane = cameraMappedPoint;
                 }
             }
@@ -276,11 +276,11 @@ public class GestureManager : NetworkBehaviour
         if(isPinching || isTwisting)
             return;
         if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f < gesture.position.y){
-            Debug.LogWarning("push in");
+            Debug.Log("push in");
             phoneRepresentation.networkedSelectedObject.GetComponent<TransitionManager>().StartPushInTransition();
         }
         else if((gesture.startPosition1 + gesture.startPosition2 / 2).y + 5f > gesture.position.y){
-            Debug.LogWarning("pull out");
+            Debug.Log("pull out");
             phoneRepresentation.networkedSelectedObject.GetComponent<TransitionManager>().StartPullOutTransitionRPC();
         }
     }
@@ -303,7 +303,7 @@ public class GestureManager : NetworkBehaviour
             return;
         if(isPinching)
             return;
-        Debug.LogWarning("Rotation: " + gesture.deltaRotation);
+        Debug.Log("Rotation: " + gesture.deltaRotation);
         // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
         // se si trova nel mondo aumentato
         if(phoneRepresentation.networkedSelectedObject.worldState == MovableObjectState.inAR){
@@ -347,16 +347,16 @@ public class GestureManager : NetworkBehaviour
         // non c'è bisogno di controllare che la platform sia mobile, le gesture vengono riconosciute solo su mobile
         // se si trova nel mondo aumentato
         if(phoneRepresentation.networkedSelectedObject.worldState == MovableObjectState.inAR){
-            Debug.LogWarning("gapDelta: " + gesture.gapDelta);
-            Debug.LogWarning("resize: " + GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
+            Debug.Log("gapDelta: " + gesture.gapDelta);
+            Debug.Log("resize: " + GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
             phoneRepresentation.networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
         }
         // altrimenti se è nel mondo virtuale
         else if(phoneRepresentation.networkedSelectedObject.worldState == MovableObjectState.inVR){
             if(!phoneRepresentation.networkedSelectedObject.GetComponent<NetworkObject>().HasStateAuthority)
                 await phoneRepresentation.networkedSelectedObject.GetComponent<NetworkObject>().WaitForStateAuthority();
-            Debug.LogWarning("gapDelta: " + gesture.gapDelta);
-            Debug.LogWarning("resize: " + GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
+            Debug.Log("gapDelta: " + gesture.gapDelta);
+            Debug.Log("resize: " + GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
             phoneRepresentation.networkedSelectedObject.UpdateScale(GetScaleByPinchGap(gesture.gapDelta * pinchGestureScaleRate));
         }
     }
