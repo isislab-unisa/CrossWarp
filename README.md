@@ -69,11 +69,9 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## 📖 About The Project
 
 ![CrossWarp][product-screenshot]
-
-![CrossWarp][product-video]
 
 
 
@@ -83,7 +81,7 @@ CrossWarp is a framework that unifies mobile AR devices (Android and iOS) and de
 
 
 
-### Built With
+### 🛠 Built With
 
 * [![Unity][Unity]][Unity-url]
 * [![ARFoundation][ARFoundation]][ARFoundation-url]
@@ -96,15 +94,15 @@ CrossWarp is a framework that unifies mobile AR devices (Android and iOS) and de
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+## 🚀 Getting Started
 
 To get a local copy up and running follow these simple example steps.
 
-### Prerequisites
+### 📌 Prerequisites
 
 Unity 2022.3 or later must be installed, to install it you can use Unity Hub.
 
-### Installation
+### 🔧 Installation
 
 1. Install Photon Fusion following the instructions on the Photon website (https://doc.photonengine.com/fusion/current/getting-started/sdk-download).
     - Add your AppID in the Photon Fusion configuration
@@ -113,7 +111,7 @@ Unity 2022.3 or later must be installed, to install it you can use Unity Hub.
     - Click on "Add package from git URL".
     - Enter the following URL: https://github.com/Be-Cenzo/CrossWarp.git?path=/Assets/CrossWarp
 
-### Configuration
+### ⚙️ Configuration
 After importing, some parameters need to be configured in Project Settings:
   - In XR Plugin Management, enable ARCore or ARKit, depending on the target platform.
   - In XR Plugin Management, run Project Validation to detect and fix any configuration issues.
@@ -125,7 +123,7 @@ After importing, some parameters need to be configured in Project Settings:
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## 🎮 Usage
 
 Once the installation is complete, you can use the components provided by CrossWarp to develop Cross-Reality experiences. The package includes example scenes demonstrating the core components, including the integration of interactive objects with physics mechanics. These examples can be imported and used as a foundation for building new collaborative and immersive applications.
 
@@ -155,7 +153,7 @@ With these components configured, any type of object can seamlessly transition b
 
 
 <!-- ROADMAP -->
-## Roadmap
+## 🛤 Roadmap
 
 - [ ] Support for Head-Mounted Displays VR/AR
 - [ ] ContainerObjects
@@ -168,7 +166,7 @@ See the [open issues](https://github.com/Be-Cenzo/CrossWarp/issues) for a full l
 
 
 <!-- CONTRIBUTING -->
-## Contributing
+## 🤝 Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -192,7 +190,7 @@ Don't forget to give the project a star! Thanks again!
 
 
 <!-- LICENSE -->
-## License
+## 📜 License
 
 Distributed under the Apache License 2.0. See `LICENSE.txt` for more information.
 
@@ -201,7 +199,7 @@ Distributed under the Apache License 2.0. See `LICENSE.txt` for more information
 
 
 <!-- CONTACT -->
-## Contact
+## 📧 Contact
 
 Vincenzo Offertucci - [Linkedin][linkedin-url]
 
@@ -212,7 +210,7 @@ Project Link: [https://github.com/Be-Cenzo/CrossWarp](https://github.com/Be-Cenz
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+## 🎖️ Acknowledgments
 
 * QuickOutline package from Chris Nolet (https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488)
 * In-game Debug Console package from yasirkula (https://assetstore.unity.com/packages/tools/gui/in-game-debug-console-68068) useful if you want an in-game debugger on mobile 
