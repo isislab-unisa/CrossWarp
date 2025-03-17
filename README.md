@@ -18,16 +18,10 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/Be-Cenzo/CrossWarp">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
-<h3 align="center">CrossWarp</h3>
+<h1 align="center">CrossWarp</h1>
 
   <p align="center">
     A cross-reality framework for seamless collaboration between different AR/VR users.
-    <br />
-    <a href="https://github.com/Be-Cenzo/CrossWarp"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/Be-Cenzo/CrossWarp">View Demo</a>
