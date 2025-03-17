@@ -4960,7 +4960,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2791972413739602816}
-  m_Mesh: {fileID: -7819110848006369789, guid: 9355926401225a4439d9522f83f0b4c4, type: 3}
+  m_Mesh: {fileID: -7819110848006369789, guid: c9d1eb64e41a12d4c88e9e9fe4441882, type: 3}
 --- !u!23 &605337289081220408
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5100,6 +5100,7 @@ MonoBehaviour:
   particleEffectsPrefab: {fileID: 409775443565383602}
   particleEffects: {fileID: 0}
   transitionManager: {fileID: 0}
+  ObjectShadow: {fileID: 0}
 --- !u!114 &8728521183533936522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14733,6 +14734,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4834214558013250272}
     m_Modifications:
+    - target: {fileID: 5850383529779226697, guid: 9e0f6ff4973f5264abb0591d55a1bc4e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -2263520289483569755, guid: 32577814588c3b2419c71370d3c4ecb7, type: 3}
     - target: {fileID: 7394742670394288108, guid: 9e0f6ff4973f5264abb0591d55a1bc4e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.372
@@ -14795,6 +14800,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4834214558013250272}
     m_Modifications:
+    - target: {fileID: 5850383529779226697, guid: 9e0f6ff4973f5264abb0591d55a1bc4e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -2263520289483569755, guid: 32577814588c3b2419c71370d3c4ecb7, type: 3}
     - target: {fileID: 7394742670394288108, guid: 9e0f6ff4973f5264abb0591d55a1bc4e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.36292782

@@ -47,7 +47,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1222816445042158756}
-  m_Mesh: {fileID: -7324477119965720364, guid: 25a68030206341c4fb8fde17a476a99f, type: 3}
+  m_Mesh: {fileID: -7324477119965720364, guid: c72acacff3b43394f88dc4ec0e72c9f6, type: 3}
 --- !u!23 &2323436318760255887
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -187,6 +187,7 @@ MonoBehaviour:
   particleEffectsPrefab: {fileID: 4131670540841159795}
   particleEffects: {fileID: 0}
   transitionManager: {fileID: 0}
+  ObjectShadow: {fileID: 0}
 --- !u!114 &6322652154127599200
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,7 +10,9 @@
     },
     "dependencies": {
         "com.unity.xr.arfoundation": "5.1.5",
-        "com.unity.xr.interaction.toolkit": "2.6.3"
+        "com.unity.xr.interaction.toolkit": "2.6.3",
+        "com.unity.xr.arcore" : "5.1.5",
+        "com.unity.xr.arkit": "5.1.5"
     },
     "keywords": ["AR", "VR", "CR", "Cross Reality", "Augmented Reality", "Virtual Reality", "Framework"]
   }
