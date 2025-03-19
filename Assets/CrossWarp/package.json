@@ -1,5 +1,5 @@
 {
-    "name": "com.becenzo.crosswarp",
+    "name": "it.isislab.crosswarp",
     "version": "1.0.0",
     "displayName": "CrossWarp",
     "description": "CrossWarp is a framework that unifies mobile AR devices (Android and iOS) and desktops into a single collaborative ecosystem. It not only ensures seamless transitions between the physical and virtual worlds but also provides a device-independent architecture designed to maximize interoperability. The system enables co-present users, such as two people using AR-enabled smartphones, to manipulate shared objects in real time while preserving their state and context, regardless of the platform used.",

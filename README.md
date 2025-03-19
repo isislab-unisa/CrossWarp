@@ -13,7 +13,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![project_license][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
 <br />
@@ -24,11 +23,11 @@
     A cross-reality framework for seamless collaboration between different AR/VR users.
     <br />
     <br />
-    <a href="https://github.com/Be-Cenzo/CrossWarp">View Demo</a>
+    <a href="https://github.com/isislab-unisa/CrossWarp">View Demo</a>
     &middot;
-    <a href="https://github.com/Be-Cenzo/CrossWarp/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/isislab-unisa/CrossWarp/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/Be-Cenzo/CrossWarp/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/isislab-unisa/CrossWarp/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -39,24 +38,24 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#-about-the-project">About The Project</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#-built-with">Built With</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#-getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#-prerequisites">Prerequisites</a></li>
+        <li><a href="#-installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li><a href="#-usage">Usage</a></li>
+    <li><a href="#-roadmap">Roadmap</a></li>
+    <li><a href="#-contributing">Contributing</a></li>
+    <li><a href="#-license">License</a></li>
+    <li><a href="#-contact">Contact</a></li>
+    <li><a href="#-acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -103,7 +102,7 @@ Unity 2022.3 or later must be installed, to install it you can use Unity Hub.
 2. Install CrossWarp via the Unity Package Manager by following these steps:
     - Open the Package Manager.
     - Click on "Add package from git URL".
-    - Enter the following URL: https://github.com/Be-Cenzo/CrossWarp.git?path=/Assets/CrossWarp
+    - Enter the following URL: https://github.com/isislab-unisa/CrossWarp.git?path=/Assets/CrossWarp
 
 ### ⚙️ Configuration
 After importing, some parameters need to be configured in Project Settings:
@@ -153,7 +152,7 @@ With these components configured, any type of object can seamlessly transition b
 - [ ] ContainerObjects
 - [ ] Physical objects prefabs
 
-See the [open issues](https://github.com/Be-Cenzo/CrossWarp/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/isislab-unisa/CrossWarp/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -177,8 +176,8 @@ Don't forget to give the project a star! Thanks again!
 
 ### Top contributors:
 
-<a href="https://github.com/Be-Cenzo/CrossWarp/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Be-Cenzo/CrossWarp" alt="contrib.rocks image" />
+<a href="https://github.com/isislab-unisa/CrossWarp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=isislab-unisa/CrossWarp" alt="contrib.rocks image" />
 </a>
 
 
@@ -197,7 +196,7 @@ Distributed under the Apache License 2.0. See `LICENSE.txt` for more information
 
 Vincenzo Offertucci - [Linkedin][linkedin-url]
 
-Project Link: [https://github.com/Be-Cenzo/CrossWarp](https://github.com/Be-Cenzo/CrossWarp)
+Project Link: [https://github.com/isislab-unisa/CrossWarp](https://github.com/isislab-unisa/CrossWarp)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -216,16 +215,16 @@ Project Link: [https://github.com/Be-Cenzo/CrossWarp](https://github.com/Be-Cenz
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[contributors-url]: https://github.com/Be-Cenzo/CrossWarp/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[forks-url]: https://github.com/Be-Cenzo/CrossWarp/network/members
-[stars-shield]: https://img.shields.io/github/stars/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[stars-url]: https://github.com/Be-Cenzo/CrossWarp/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[issues-url]: https://github.com/Be-Cenzo/CrossWarp/issues
-[license-shield]: https://img.shields.io/github/license/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[license-url]: https://github.com/Be-Cenzo/CrossWarp/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/isislab-unisa/CrossWarp.svg?style=for-the-badge
+[contributors-url]: https://github.com/isislab-unisa/CrossWarp/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/isislab-unisa/CrossWarp.svg?style=for-the-badge
+[forks-url]: https://github.com/isislab-unisa/CrossWarp/network/members
+[stars-shield]: https://img.shields.io/github/stars/isislab-unisa/CrossWarp.svg?style=for-the-badge
+[stars-url]: https://github.com/isislab-unisa/CrossWarp/stargazers
+[issues-shield]: https://img.shields.io/github/issues/isislab-unisa/CrossWarp.svg?style=for-the-badge
+[issues-url]: https://github.com/isislab-unisa/CrossWarp/issues
+[license-shield]: https://img.shields.io/github/license/isislab-unisa/CrossWarp.svg?style=for-the-badge
+[license-url]: https://github.com/isislab-unisa/CrossWarp/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/vincenzo-offertucci
 [product-screenshot]: ReadmeFigures/CrossWarp.png
