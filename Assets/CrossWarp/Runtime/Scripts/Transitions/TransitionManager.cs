@@ -94,10 +94,15 @@ public class TransitionManager : NetworkBehaviour
         }
         else if(transitionState == TransitionState.MovingFromDisplay){
             // effetti particellari
+            if(movableObject.particleEffects){
             movableObject.particleEffects.transform.parent = transform;
             movableObject.particleEffects.transform.localPosition = movableObject.particleEffectsPrefab.transform.localPosition;
             movableObject.particleEffects.GetComponent<ParticleSystem>().Play();
             movableObject.particleEffects.transform.parent = null;
+            }
+            else{
+                Debug.LogWarning("Missing Particle Effects");
+            }
             Vector3 targetPosition = Vector3.zero;
 
             // se la transizione è da AR a VR allora il desktop deve richiedere la state authority per occuparsi degli spostamenti dell'oggetto

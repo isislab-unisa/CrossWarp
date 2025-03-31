@@ -149,8 +149,10 @@ public class Transition
 
     public IEnumerator StartARToVRSeamless(bool inDesktop, Vector3 target){
         Debug.Log("particelle");
-        ParticleSystem particleSystem = applyTo.particleEffects.GetComponent<ParticleSystem>();
-        particleSystem.Play();
+        if(applyTo.particleEffects){
+            ParticleSystem particleSystem = applyTo.particleEffects.GetComponent<ParticleSystem>();
+            particleSystem.Play();
+        }
         if(inDesktop){
             applyTo.StartAssemble();
         }
@@ -164,8 +166,10 @@ public class Transition
 
     public IEnumerator StartVRToARSeamless(bool inDesktop, Vector3 target){
         Debug.Log("particelle");
-        ParticleSystem particleSystem = applyTo.particleEffects.GetComponent<ParticleSystem>();
-        particleSystem.Play();
+        if(applyTo.particleEffects){
+            ParticleSystem particleSystem = applyTo.particleEffects.GetComponent<ParticleSystem>();
+            particleSystem.Play();
+        }
         if(inDesktop){
             applyTo.StartDissolve();
         }

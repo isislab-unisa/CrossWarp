@@ -62,8 +62,10 @@ public class MovableObject : NetworkBehaviour
         transitionManager = GetComponent<TransitionManager>();
 
 
-        particleEffects = Instantiate(particleEffectsPrefab, transform);
-        //particleEffects.GetComponent<ParticleSystem>().Play();
+        if(particleEffectsPrefab)
+            particleEffects = Instantiate(particleEffectsPrefab, transform);
+        else
+            Debug.LogWarning("Missing ParticleEffectsPrefab");
         StartAssemble();
         float seedForNoise = Random.Range(1, 100);
         //meshRenderer.material.SetFloat("_SeedForRandomNoise", seedForNoise);

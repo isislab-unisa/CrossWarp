@@ -208,6 +208,7 @@ Project Link: [https://github.com/isislab-unisa/CrossWarp](https://github.com/is
 * QuickOutline package from Chris Nolet (https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488)
 * In-game Debug Console package from yasirkula (https://assetstore.unity.com/packages/tools/gui/in-game-debug-console-68068) useful if you want an in-game debugger on mobile 
 * Interior House Assets package (https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122)
+* Digital artworks made by Federica Corso
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
